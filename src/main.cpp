@@ -4,7 +4,7 @@
 #include <mutex>
 #include <thread>
 
-#include "PIRegulator.h"
+#include "Parameters.h"
 
 #define MACHINE_CYCLE_TIME_MS 100
 #define PI_CYCLE_TIME_MS 10000
@@ -13,9 +13,10 @@ using namespace std;
 
 // Global variables
 bool g_run_machine_cycle = true;
+Parameters g_parameters;
 
 void machine_cycle() {
-    PIRegulator reg;
+    PIRegulator reg{g_parameters.getRegulatorParameters()};
     int cycle_counter = 0;
     constexpr auto cycle_duration = chrono::milliseconds(MACHINE_CYCLE_TIME_MS);
 
@@ -35,6 +36,12 @@ void machine_cycle() {
 }
 
 int main(int argc, const char *argv[]) {
+    if(!g_parameters.load_file())
+    {
+        cerr << "Failed to load parameter file." << endl;
+        return 1;
+    }
+
     crow::SimpleApp app;
     thread machine_thread(machine_cycle);
 

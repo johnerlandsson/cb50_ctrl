@@ -1,14 +1,8 @@
 #ifndef PIREGULATOR_H
 #define PIREGULATOR_H
 
-#include "Parameters.h"
-
 class PIRegulator {
    public:
-    PIRegulator();
-    ~PIRegulator();
-    float regulate(double sv, double pv);
-
     typedef struct {
         double kp;
         double ki;
@@ -17,6 +11,11 @@ class PIRegulator {
         double min_output;
         double max_output;
     } parameters_t;
+
+    PIRegulator();
+    PIRegulator(const parameters_t p);
+    ~PIRegulator();
+    float regulate(double sv, double pv);
 
    private:
     parameters_t _p;

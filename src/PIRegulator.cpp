@@ -1,6 +1,12 @@
 #include "PIRegulator.h"
+#include <cstring>
 
-PIRegulator::PIRegulator() {}
+PIRegulator::PIRegulator() {
+    memset(&_p, 0, sizeof(parameters_t));
+}
+
+PIRegulator::PIRegulator(const parameters_t p) : _p(p) {}
+
 PIRegulator::~PIRegulator() {}
 
 float PIRegulator::regulate(double sv, double pv) {

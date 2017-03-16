@@ -82,6 +82,7 @@ flags = [
 '-isystem',
 './tests/gmock/include',
 '-Ithird_party/crow/include',
+'-Ithird_party/json/src',
 ]
 
 

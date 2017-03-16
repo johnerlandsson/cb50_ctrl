@@ -1,0 +1,11 @@
+{
+ "regulator": {
+  "ki": 0.0,
+  "kp": 1.0,
+  "max_istate": 200.0,
+  "max_output": 100.0,
+  "min_istate": -200.0,
+  "min_output": 0.0
+ }
+}
+
