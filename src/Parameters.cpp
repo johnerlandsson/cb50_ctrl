@@ -31,8 +31,12 @@ bool Parameters::from_json(const nlohmann::json& p) {
     return true;
 }
 
-bool Parameters::from_json(const std::string& p) {
+bool Parameters::from_str(const std::string& p) {
     return from_json(nlohmann::json::parse(p));
+}
+
+bool Parameters::from_wvalue(const crow::json::wvalue& p) {
+    return from_str(crow::json::dump(p));
 }
 
 bool Parameters::load_file() {

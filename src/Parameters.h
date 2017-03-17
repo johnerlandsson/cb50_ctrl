@@ -12,8 +12,9 @@ class Parameters {
     Parameters();
     virtual ~Parameters();
     crow::json::wvalue to_wvalue() const;
-    bool from_json(const std::string& p);
+    bool from_str(const std::string& p);
     bool from_json(const nlohmann::json& p);
+    bool from_wvalue(const crow::json::wvalue& p);
     bool load_file();
     PIRegulator::parameters_t getRegulatorParameters() const;
 
