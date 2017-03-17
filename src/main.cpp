@@ -36,17 +36,39 @@ void machine_cycle() {
 }
 
 int main(int argc, const char *argv[]) {
-    if(!g_parameters.load_file())
-    {
+    if (!g_parameters.load_file()) {
         cerr << "Failed to load parameter file." << endl;
         return 1;
     }
 
     crow::SimpleApp app;
+    crow::mustache::set_base("./www");
     thread machine_thread(machine_cycle);
 
     CROW_ROUTE(app, "/")
-    ([]() { return "Hello"; });
+    ([]() {
+        crow::mustache::context ctx;
+        return crow::mustache::load("index.html").render();
+    });
+
+    CROW_ROUTE(app, "/parameters")
+    ([]() {
+        crow::mustache::context ctx;
+        return crow::mustache::load("parameters.html").render();
+    });
+
+    CROW_ROUTE(app, "/log")
+    ([]() {
+        crow::mustache::context ctx;
+        return crow::mustache::load("log.html").render();
+    });
+
+    CROW_ROUTE(app, "/trend")
+    ([]() {
+        crow::mustache::context ctx;
+        return crow::mustache::load("trend.html").render();
+    });
+
 
     app.port(18080).run();
 

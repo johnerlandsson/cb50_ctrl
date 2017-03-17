@@ -8,3 +8,5 @@ CMakeFiles/
 cmake_install.cmake
 junk/
 src/*.swp
+www/*.swp
+.ycm_extra_conf.pyc
