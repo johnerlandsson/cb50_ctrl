@@ -82,10 +82,11 @@ int main(int argc, const char *argv[]) {
     CROW_ROUTE(app, "/assets/js/<str>")
     ([](string path) {
         auto f = "assets/js/" + path;
-        if(file_exists(f))
+        if(file_exists("www/" + f))
         {
+            cout << "Here" << endl;
             crow::mustache::context ctx;
-            return crow::response(crow::mustache::load("assets/js/" + path).render());
+            return crow::response(crow::mustache::load(f).render());
         }
         return crow::response(404);
     });
@@ -93,10 +94,12 @@ int main(int argc, const char *argv[]) {
     CROW_ROUTE(app, "/assets/css/<str>")
     ([](string path) {
         auto f = "assets/css/" + path;
-        if(file_exists(f))
+        if(file_exists("www/" + f))
         {
             crow::mustache::context ctx;
-            return crow::response(crow::mustache::load("assets/css/" + path).render());
+            cout << f << endl
+                 << crow::mustache::load(f).render() << endl;
+            return crow::response(crow::mustache::load(f).render());
         }
         return crow::response(404);
     });
@@ -104,13 +107,23 @@ int main(int argc, const char *argv[]) {
     CROW_ROUTE(app, "/assets/img/<str>")
     ([](string path) {
         auto f = "assets/img/" + path;
-        if(file_exists(f))
+        if(file_exists("www/" + f))
         {
             crow::mustache::context ctx;
-            return crow::response(crow::mustache::load("assets/img/" + path).render());
+            return crow::response(crow::mustache::load(f).render());
         }
         return crow::response(404);
-        crow::mustache::context ctx;
+    });
+
+    CROW_ROUTE(app, "/assets/fonts/<str>")
+    ([](string path) {
+        auto f = "assets/fonts/" + path;
+        if(file_exists("www/" + f))
+        {
+            crow::mustache::context ctx;
+            return crow::response(crow::mustache::load(f).render());
+        }
+        return crow::response(404);
     });
 
 

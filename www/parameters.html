@@ -6,6 +6,8 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/font-awesome.min.css">
     <script src="assets/js/jquery.min.js"></script>
     <script src="assets/js/bootstrap.min.js"></script>
     <title>CB50 Control - Parameters</title>
@@ -31,6 +33,49 @@
             </div>
         </div>
     </nav>
+    <div class="container">
+        <div class="container-page-icon">
+            <i class="fa fa-sliders fa-5x"></i>
+        </div>
+    </div>
+    <div class="container">
+        <h3>Regulator parameters</h3>
+        <form action="/send_params">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Kp</td>
+                        <td><input type="number" name="Kp" min="0.0001" max="1000.0"
+                                alt="Proportional gain constant" step="0.1" value="1.2"
+                                required></td>
+                    </tr>
+                    <tr>
+                        <td>Ki</td>
+                        <td><input type="number" name="Ki" min="0.0001" max="1000.0"
+                                alt="Integral constant" step="0.1" value="0.0" required></td>
+                    </tr>
+                    <tr>
+                        <td>Minimum integral state</td>
+                        <td><input type="number" name="min_istate" min="-1000.0" max="0.0"
+                                alt="Minimum value of the accumulated error. Set this to limit wind-up"
+                                step="1.0" value="-200.0" required></td>
+                    </tr>
+                    <tr>
+                        <td>Maximum integral state</td>
+                        <td><input type="number" name="max_istate" min="0.0" max="1000.0"
+                                alt="Maximum value of the accumulated error. Set this to limit wind-up"
+                                step="1.0" value="-200.0" required></td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
 </body>
 
 </html>

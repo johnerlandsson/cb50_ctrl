@@ -1,21 +1,9 @@
-.bg-1 { 
-  background-color: #1abc9c;
-  /*background-color: pink;*/
-  color: #ffffff;
+.container-page-icon {
+    padding-top: 30px;
+    padding-bottom: 30px;
 }
-.bg-2 { 
-  background-color: #474e5d;
-  /*background-color: pink;*/
-  color: #ffffff;
-}
-.bg-3 { 
-  background-color: #ffffff;
-  /*background-color: pink;*/
-  color: #555555;
-}
-.container-fluid {
-  padding-top: 70px;
-  padding-bottom: 70px;
+.container-page-icon i:hover {
+  color: #1abc9c !important;
 }
 .navbar {
   padding-top: 15px;
