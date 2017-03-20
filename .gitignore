@@ -10,3 +10,4 @@ junk/
 src/*.swp
 www/*.swp
 .ycm_extra_conf.pyc
+www/assets/css/.style.css.swp

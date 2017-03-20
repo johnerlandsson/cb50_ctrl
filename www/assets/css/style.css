@@ -1,0 +1,31 @@
+.bg-1 { 
+  background-color: #1abc9c;
+  /*background-color: pink;*/
+  color: #ffffff;
+}
+.bg-2 { 
+  background-color: #474e5d;
+  /*background-color: pink;*/
+  color: #ffffff;
+}
+.bg-3 { 
+  background-color: #ffffff;
+  /*background-color: pink;*/
+  color: #555555;
+}
+.container-fluid {
+  padding-top: 70px;
+  padding-bottom: 70px;
+}
+.navbar {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  border: 0;
+  border-radius: 0;
+  margin-bottom: 0;
+  font-size: 12px;
+  letter-spacing: 5px;
+}
+.navbar-nav  li a:hover {
+  color: #1abc9c !important;
+}

@@ -3,6 +3,8 @@
 #include <iostream>
 #include <mutex>
 #include <thread>
+#include <vector>
+#include <sys/stat.h>
 
 #include "Parameters.h"
 
@@ -14,6 +16,14 @@ using namespace std;
 // Global variables
 bool g_run_machine_cycle = true;
 Parameters g_parameters;
+
+/* file_exists
+ * Returns true if file at given path exists
+ */
+inline bool file_exists(const std::string& p) {
+    struct stat buffer;
+    return (stat (p.c_str(), &buffer) == 0);
+}
 
 void machine_cycle() {
     PIRegulator reg{g_parameters.getRegulatorParameters()};
@@ -67,6 +77,40 @@ int main(int argc, const char *argv[]) {
     ([]() {
         crow::mustache::context ctx;
         return crow::mustache::load("trend.html").render();
+    });
+
+    CROW_ROUTE(app, "/assets/js/<str>")
+    ([](string path) {
+        auto f = "assets/js/" + path;
+        if(file_exists(f))
+        {
+            crow::mustache::context ctx;
+            return crow::response(crow::mustache::load("assets/js/" + path).render());
+        }
+        return crow::response(404);
+    });
+
+    CROW_ROUTE(app, "/assets/css/<str>")
+    ([](string path) {
+        auto f = "assets/css/" + path;
+        if(file_exists(f))
+        {
+            crow::mustache::context ctx;
+            return crow::response(crow::mustache::load("assets/css/" + path).render());
+        }
+        return crow::response(404);
+    });
+
+    CROW_ROUTE(app, "/assets/img/<str>")
+    ([](string path) {
+        auto f = "assets/img/" + path;
+        if(file_exists(f))
+        {
+            crow::mustache::context ctx;
+            return crow::response(crow::mustache::load("assets/img/" + path).render());
+        }
+        return crow::response(404);
+        crow::mustache::context ctx;
     });
 
 
