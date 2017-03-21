@@ -1,10 +1,10 @@
 #include <crow.h>
+#include <sys/stat.h>
 #include <chrono>
 #include <iostream>
 #include <mutex>
 #include <thread>
 #include <vector>
-#include <sys/stat.h>
 
 #include "Parameters.h"
 
@@ -17,12 +17,30 @@ using namespace std;
 bool g_run_machine_cycle = true;
 Parameters g_parameters;
 
+string file2string(const string file) {
+    ifstream f(file);
+    if (f.is_open()) {
+        string ret{(istreambuf_iterator<char>(f)),
+                   (istreambuf_iterator<char>())};
+        f.close();
+        return ret;
+    }
+
+    return string();
+}
+
 /* file_exists
  * Returns true if file at given path exists
  */
 inline bool file_exists(const std::string& p) {
     struct stat buffer;
-    return (stat (p.c_str(), &buffer) == 0);
+    return (stat(p.c_str(), &buffer) == 0);
+}
+
+string render_file(const std::string file) {
+    crow::mustache::context ctx;
+    if (!file_exists("www/" + file)) return string();
+    return crow::mustache::load(file).render();
 }
 
 void machine_cycle() {
@@ -45,7 +63,7 @@ void machine_cycle() {
     }
 }
 
-int main(int argc, const char *argv[]) {
+int main(int argc, const char* argv[]) {
     if (!g_parameters.load_file()) {
         cerr << "Failed to load parameter file." << endl;
         return 1;
@@ -81,24 +99,33 @@ int main(int argc, const char *argv[]) {
 
     CROW_ROUTE(app, "/assets/js/<str>")
     ([](string path) {
-        auto f = "assets/js/" + path;
-        if(file_exists("www/" + f))
-        {
-            cout << "Here" << endl;
-            crow::mustache::context ctx;
-            return crow::response(crow::mustache::load(f).render());
-        }
-        return crow::response(404);
+        auto body = file2string("www/assets/js/" + path);
+        if (body.length() <= 0) return crow::response(404);
+
+        return crow::response(body);
+    });
+
+    CROW_ROUTE(app, "/assets/js/chart/chart.js")
+    ([]() {
+        auto body = render_file("assets/js/chart/chart.js");
+        if (body.length() <= 0) return crow::response(404);
+
+        return crow::response(body);
+    });
+
+    CROW_ROUTE(app, "/assets/js/chart/<str>/<str>")
+    ([](string subfolder, string file) {
+        auto body = render_file("assets/js/chart/" + subfolder + '/' + file);
+        if (body.length() <= 0) return crow::response(404);
+
+        return crow::response(body);
     });
 
     CROW_ROUTE(app, "/assets/css/<str>")
     ([](string path) {
         auto f = "assets/css/" + path;
-        if(file_exists("www/" + f))
-        {
+        if (file_exists("www/" + f)) {
             crow::mustache::context ctx;
-            cout << f << endl
-                 << crow::mustache::load(f).render() << endl;
             return crow::response(crow::mustache::load(f).render());
         }
         return crow::response(404);
@@ -107,8 +134,7 @@ int main(int argc, const char *argv[]) {
     CROW_ROUTE(app, "/assets/img/<str>")
     ([](string path) {
         auto f = "assets/img/" + path;
-        if(file_exists("www/" + f))
-        {
+        if (file_exists("www/" + f)) {
             crow::mustache::context ctx;
             return crow::response(crow::mustache::load(f).render());
         }
@@ -117,17 +143,12 @@ int main(int argc, const char *argv[]) {
 
     CROW_ROUTE(app, "/assets/fonts/<str>")
     ([](string path) {
-        auto f = "assets/fonts/" + path;
-        if(file_exists("www/" + f))
-        {
-            crow::mustache::context ctx;
-            return crow::response(crow::mustache::load(f).render());
-        }
-        return crow::response(404);
+        auto body = file2string("www/assets/fonts/" + path);
+        if (body.length() <= 0) return crow::response(404);
+        return crow::response(body);
     });
 
-
-    app.port(18080).run();
+    app.port(80).run();
 
     // Stop machine thread
     g_run_machine_cycle = false;

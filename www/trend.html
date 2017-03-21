@@ -10,7 +10,36 @@
     <link rel="stylesheet" href="assets/css/font-awesome.min.css">
     <script src="assets/js/jquery.min.js"></script>
     <script src="assets/js/bootstrap.min.js"></script>
+    <!--<script src="assets/js/angular.js"></script>-->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <script src="assets/js/Chart.bundle.min.js"></script>
+    <script src="assets/js/angular-chart.min.js"></script>
+    <!--<script src="assets/js/trend.js"></script>-->
     <title>CB50 Control - Trend</title>
+    <script>
+        (function() {
+            'use strict';
+
+            function LineCtrl() {
+                this.data = {
+                    labels: ["January", "February", "March",
+                        "April", "May", "June"
+                    ],
+                    datasets: [{
+                        fillColor: "rgba(220,220,220,0.2)",
+                        strokeColor: "rgba(220,220,220,1)",
+                        pointColor: "rgba(220,220,220,1)",
+                        data: [40, 10, 60, 70, 20, 20]
+                    }, {
+                        fillColor: "rgba(151,187,205,0.2)",
+                        strokeColor: "rgba(151,187,205,1)",
+                        pointColor: "rgba(151,187,205,1)",
+                        data: [30, 70, 40, 90, 60, 70]
+                    }]
+                };
+            }
+        })();
+    </script>
 </head>
 
 <body>
@@ -36,6 +65,16 @@
     <div class="container">
         <div class="container-page-icon">
             <i class="fa fa-line-chart fa-5x"></i>
+        </div>
+    </div>
+    <div class="container">
+        <div data-ng-controller="LineCtrl as line" layout="column" layout-align="center center"
+            layout-margin="" class="ng-scope">
+            <!-- ngIf: demo.run -->
+            <!-- ngIf: !demo.run --><canvas data-sys-chart-line="" data-dataset="line.data" width="932"
+                height="372" data-ng-if="!demo.run" class="ng-scope ng-isolate-scope"
+                style="width: 932px; height: 372px;"></canvas>
+            <!-- end ngIf: !demo.run -->
         </div>
     </div>
 </body>
