@@ -3,7 +3,7 @@ project(cb50_ctrl)
 
 #add_subdirectory(third_party)
 
-add_executable(cb50_ctrl src/main.cpp src/PIRegulator.cpp src/Parameters.cpp)
+add_executable(cb50_ctrl src/main.cpp src/PIRegulator.cpp src/Parameters.cpp src/TrendData.cpp)
 #message("Copying Chart.js files...")
 #file(COPY third_party/Chart.js/src/ DESTINATION www/assets/js/chart/)
 message("Copying angular-chart.js files...")
