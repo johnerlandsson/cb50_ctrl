@@ -17,6 +17,23 @@ using namespace std;
 bool g_run_machine_cycle = true;
 Parameters g_parameters;
 
+crow::response file2response(const string filename) {
+    // Prevent directory traversal
+    if (filename.find("../") != string::npos) return crow::response(403);
+
+    ifstream f(filename);
+    if (f.is_open()) {
+        string body{(istreambuf_iterator<char>(f)),
+                    (istreambuf_iterator<char>())};
+        f.close();
+        if (body.length() <= 0) return crow::response(500);
+
+        return crow::response(body);
+    }
+
+    return crow::response(404);
+}
+
 string file2string(const string file) {
     ifstream f(file);
     if (f.is_open()) {
@@ -73,79 +90,23 @@ int main(int argc, const char* argv[]) {
     crow::mustache::set_base("./www");
     thread machine_thread(machine_cycle);
 
+    // Static routing of assets
+    CROW_ROUTE(app, "/assets/<str>/<str>")
+    ([](string folder, string file) {
+        return file2response("www/assets/" + folder + '/' + file);
+    });
+
+    // Render pages
+    CROW_ROUTE(app, "/<str>")
+    ([](string page) {
+        crow::mustache::context ctx;
+        return crow::response(crow::mustache::load(page + ".html").render());
+    });
+
     CROW_ROUTE(app, "/")
     ([]() {
         crow::mustache::context ctx;
-        return crow::mustache::load("index.html").render();
-    });
-
-    CROW_ROUTE(app, "/parameters")
-    ([]() {
-        crow::mustache::context ctx;
-        return crow::mustache::load("parameters.html").render();
-    });
-
-    CROW_ROUTE(app, "/log")
-    ([]() {
-        crow::mustache::context ctx;
-        return crow::mustache::load("log.html").render();
-    });
-
-    CROW_ROUTE(app, "/trend")
-    ([]() {
-        crow::mustache::context ctx;
-        return crow::mustache::load("trend.html").render();
-    });
-
-    CROW_ROUTE(app, "/assets/js/<str>")
-    ([](string path) {
-        auto body = file2string("www/assets/js/" + path);
-        if (body.length() <= 0) return crow::response(404);
-
-        return crow::response(body);
-    });
-
-    CROW_ROUTE(app, "/assets/js/chart/chart.js")
-    ([]() {
-        auto body = render_file("assets/js/chart/chart.js");
-        if (body.length() <= 0) return crow::response(404);
-
-        return crow::response(body);
-    });
-
-    CROW_ROUTE(app, "/assets/js/chart/<str>/<str>")
-    ([](string subfolder, string file) {
-        auto body = render_file("assets/js/chart/" + subfolder + '/' + file);
-        if (body.length() <= 0) return crow::response(404);
-
-        return crow::response(body);
-    });
-
-    CROW_ROUTE(app, "/assets/css/<str>")
-    ([](string path) {
-        auto f = "assets/css/" + path;
-        if (file_exists("www/" + f)) {
-            crow::mustache::context ctx;
-            return crow::response(crow::mustache::load(f).render());
-        }
-        return crow::response(404);
-    });
-
-    CROW_ROUTE(app, "/assets/img/<str>")
-    ([](string path) {
-        auto f = "assets/img/" + path;
-        if (file_exists("www/" + f)) {
-            crow::mustache::context ctx;
-            return crow::response(crow::mustache::load(f).render());
-        }
-        return crow::response(404);
-    });
-
-    CROW_ROUTE(app, "/assets/fonts/<str>")
-    ([](string path) {
-        auto body = file2string("www/assets/fonts/" + path);
-        if (body.length() <= 0) return crow::response(404);
-        return crow::response(body);
+        return crow::response(crow::mustache::load("index.html").render());
     });
 
     app.port(80).run();
