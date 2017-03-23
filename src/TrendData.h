@@ -11,8 +11,8 @@ class TrendData {
     crow::json::wvalue getData() const;
 
    private:
-    crow::json::wvalue _d;
     size_t _sd;
+    crow::json::wvalue _d;
     mutable std::mutex _m;
 };
 

@@ -71,7 +71,9 @@ void machine_cycle() {
             cout << "Regulating" << endl;
         }
 
-        if (trend_cycle_counter >= 10000) {
+        if (trend_cycle_counter >= 100) {
+            cout << "Adding trend data" << endl
+                << crow::json::dump(g_trendData.getData()) << endl;
             pv += 1.0f;
             g_trendData.append(sv, pv, output);
             trend_cycle_counter = 0;
@@ -102,28 +104,7 @@ int main(int argc, const char* argv[]) {
 
     CROW_ROUTE(app, "/get_trend")
     ([]() {
-        crow::json::wvalue data;
-        data["labels"][0] = 0;
-        data["labels"][1] = 1;
-        data["labels"][2] = 2;
-        data["labels"][3] = 3;
-        data["labels"][4] = 4;
-        data["labels"][5] = 5;
-        data["labels"][6] = 6;
-        data["labels"][7] = 7;
-        data["labels"][8] = 8;
-        data["labels"][9] = 9;
-        data["data"]["sv"][0] = 20;
-        data["data"]["sv"][1] = 21;
-        data["data"]["sv"][2] = 21;
-        data["data"]["sv"][3] = 22;
-        data["data"]["sv"][4] = 22;
-        data["data"]["sv"][5] = 24;
-        data["data"]["sv"][6] = 25;
-        data["data"]["sv"][7] = 26;
-        data["data"]["sv"][8] = 27;
-        data["data"]["sv"][9] = 28;
-        return crow::response(data);
+        return crow::response(g_trendData.getData());
     });
 
     // Render pages
