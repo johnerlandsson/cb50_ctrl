@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="assets/css/font-awesome.min.css">
     <script src="assets/js/jquery.min.js"></script>
     <script src="assets/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.js"></script>
+    <script src="assets/js/parameters.js"></script>
     <title>CB50 Control - Parameters</title>
 </head>
 
@@ -33,9 +35,12 @@
             </div>
         </div>
     </nav>
-    <div class="container">
-        <h3>Regulator parameters</h3>
-        <form action="/send_params">
+    <div class="container" ng-app="ParameterApp" ng-controller="ParameterCtrl">
+        <div class="container-spinner" ng-show="!visibleState">
+            <i class="fa fa-spinner fa-spin fa-5x"></i>
+        </div>
+        <div class="container-param" ng-show="visibleState">
+            <h3>Regulator parameters</h3>
             <table class="table table-striped">
                 <thead>
                     <tr>
@@ -46,30 +51,37 @@
                 <tbody>
                     <tr>
                         <td>Kp</td>
-                        <td><input type="number" name="Kp" min="0.0001" max="1000.0"
-                                alt="Proportional gain constant" step="0.1" value="1.2"
-                                required></td>
+                        <td><input type="number" name="parameters.regulator.kp" min="0.0001"
+                                max="1000.0" alt="Proportional gain constant" step="0.1"
+                                ng-model="parameters.regulator.kp" required></td>
                     </tr>
                     <tr>
                         <td>Ki</td>
-                        <td><input type="number" name="Ki" min="0.0001" max="1000.0"
-                                alt="Integral constant" step="0.1" value="0.0" required></td>
+                        <td><input type="number" name="parameters.regulator.ki" min="0.0001"
+                                max="1000.0" alt="Integral constant" step="0.1" ng-model="parameters.regulator.ki"
+                                required></td>
                     </tr>
                     <tr>
                         <td>Minimum integral state</td>
-                        <td><input type="number" name="min_istate" min="-1000.0" max="0.0"
-                                alt="Minimum value of the accumulated error. Set this to limit wind-up"
-                                step="1.0" value="-200.0" required></td>
+                        <td><input type="number" name="parameters.regulator.min_istate"
+                                min="-1000.0" max="0.0" alt="Minimum value of the accumulated error. Set this to limit wind-up"
+                                step="1.0" ng-model="parameters.regulator.min_istate"
+                                required></td>
                     </tr>
                     <tr>
                         <td>Maximum integral state</td>
-                        <td><input type="number" name="max_istate" min="0.0" max="1000.0"
-                                alt="Maximum value of the accumulated error. Set this to limit wind-up"
-                                step="1.0" value="-200.0" required></td>
+                        <td><input type="number" name="parameters.regulator.max_istate"
+                                min="0.0" max="1000.0" alt="Maximum value of the accumulated error. Set this to limit wind-up"
+                                step="1.0" ng-model="parameters.regulator.max_istate"
+                                required></td>
                     </tr>
                 </tbody>
             </table>
-        </form>
+            <div class="buttons">
+                <a href="" alt="Save parameters" ng-click="sendParameters()"><i class="fa fa-check fa-4x"></i></a>
+                <a href="" alt="Reset parameters" ng-click="resetParameters()"><i class="fa fa-remove fa-4x"></i></a>
+            </div>
+        </div>
     </div>
 </body>
 

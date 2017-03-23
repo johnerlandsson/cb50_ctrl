@@ -111,6 +111,11 @@ int main(int argc, const char* argv[]) {
         return crow::response(g_trendData.getData());
     });
 
+    CROW_ROUTE(app, "/get_parameters")
+    ([]() {
+        return crow::response(g_parameters.to_wvalue());
+    });
+
     // Render pages
     CROW_ROUTE(app, "/<str>")
     ([](string page) {
