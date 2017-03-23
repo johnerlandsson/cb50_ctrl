@@ -27,7 +27,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>                        
       </button>
-                <a class="navbar-brand" href="#">Trend</a>
+      <a class="navbar-brand" href="#"><i class="fa fa-line-chart"></i>Trend</a>
             </div>
             <div class="collapse navbar-collapse" id="myNavbar">
                 <ul class="nav navbar-nav navbar-right">
@@ -38,11 +38,6 @@
             </div>
         </div>
     </nav>
-    <div class="container">
-        <div class="container-page-icon">
-            <i class="fa fa-line-chart fa-5x"></i>
-        </div>
-    </div>
     <div class="container" ng-app="TrendApp" ng-controller="TrendCtrl">
         <canvas id="line" class="chart chart-line" chart-data="data" chart-labels="labels"
             chart-series="series" chart-options="options" chart-dataset-override="datasetOverride"

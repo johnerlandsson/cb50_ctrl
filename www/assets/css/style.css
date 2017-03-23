@@ -5,6 +5,10 @@
 .container-page-icon i:hover {
   color: #1abc9c !important;
 }
+.container canvas{
+  margin-top: 100px; 
+}
+
 .navbar {
   padding-top: 15px;
   padding-bottom: 15px;

@@ -5,6 +5,7 @@
 #include <mutex>
 #include <thread>
 #include <vector>
+#include <cmath>
 
 #include "Parameters.h"
 #include "TrendData.h"
@@ -75,6 +76,9 @@ void machine_cycle() {
             cout << "Adding trend data" << endl
                 << crow::json::dump(g_trendData.getData()) << endl;
             pv += 1.0f;
+            static int tmp = 0;
+            pv = 100.0 * cos(tmp * 0.1);
+            tmp++;
             g_trendData.append(sv, pv, output);
             trend_cycle_counter = 0;
         }
