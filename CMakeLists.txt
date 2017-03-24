@@ -6,3 +6,4 @@ IF( NOT CMAKE_BUILD_TYPE )
 ENDIF()
 
 add_subdirectory("cb50_ctrl")
+add_subdirectory("kmod")
