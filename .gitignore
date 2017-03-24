@@ -3,7 +3,6 @@ CMakeFIles
 Makefile
 tags
 __pycache__/
-cb50_ctrl
 CMakeFiles/
 cmake_install.cmake
 junk/
@@ -13,3 +12,5 @@ www/*.swp
 www/assets/css/.style.css.swp
 www/assets/js/chart
 .CMakeLists.txt.swp
+build
+cb50_ctrl/src/.*.swp
