@@ -81,8 +81,8 @@ flags = [
 './tests/gmock',
 '-isystem',
 './tests/gmock/include',
-'-Ithird_party/crow/include',
-'-Ithird_party/json/src',
+'-I../third_party/crow/include',
+'-I../third_party/json/src',
 ]
 
 

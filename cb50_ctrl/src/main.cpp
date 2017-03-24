@@ -1,17 +1,18 @@
 #include <crow.h>
-#include <sys/stat.h>
-#include <chrono>
-#include <cmath>
 #include <iostream>
-#include <mutex>
 #include <thread>
-#include <vector>
 
 #include "Parameters.h"
 #include "TrendData.h"
 
 #define MACHINE_CYCLE_TIME_MS 100
 #define PI_CYCLE_TIME_MS 10000
+
+#ifdef NDEBUG
+#define WWW_PREFIX "/var/www/"
+#else
+#define WWW_PREFIX "../../www/"
+#endif
 
 using namespace std;
 
@@ -25,7 +26,9 @@ TrendData g_trendData;
  */
 crow::response file2response(const string filename) {
     // Prevent directory traversal
+#ifdef NDEBUG
     if (filename.find("../") != string::npos) return crow::response(403);
+#endif
 
     ifstream f(filename);
     if (f.is_open()) {
@@ -48,12 +51,9 @@ inline bool file_exists(const std::string& p) {
     return (stat(p.c_str(), &buffer) == 0);
 }
 
-string render_file(const std::string file) {
-    crow::mustache::context ctx;
-    if (!file_exists("www/" + file)) return string();
-    return crow::mustache::load(file).render();
-}
-
+/* machine_cycle
+ * Handle I/O and temperature regulator
+ */
 void machine_cycle() {
     PIRegulator reg{g_parameters.getRegulatorParameters()};
     int pi_cycle_counter{0};
@@ -87,28 +87,31 @@ void machine_cycle() {
     }
 }
 
-int main(int argc, const char* argv[]) {
+int main(void) {
     if (!g_parameters.load_file()) {
         cerr << "Failed to load parameter file." << endl;
         return 1;
     }
 
     crow::SimpleApp app;
-    crow::mustache::set_base("./www");
+    crow::mustache::set_base(WWW_PREFIX);
     thread machine_thread(machine_cycle);
 
     // Static routing of assets
     CROW_ROUTE(app, "/assets/<str>/<str>")
     ([](string folder, string file) {
-        return file2response("www/assets/" + folder + '/' + file);
+        return file2response(string(WWW_PREFIX) + "assets/" + folder + '/' + file);
     });
 
+    // Route trend data
     CROW_ROUTE(app, "/get_trend")
     ([]() { return crow::response(g_trendData.getData()); });
 
+    // Send parameters
     CROW_ROUTE(app, "/get_parameters")
     ([]() { return crow::response(g_parameters.to_wvalue()); });
 
+    //Receive parameters
     CROW_ROUTE(app, "/put_parameters")
         .methods("GET"_method, "POST"_method)([](const crow::request& req) {
             try {
@@ -120,17 +123,18 @@ int main(int argc, const char* argv[]) {
             return crow::response(500);
         });
 
-    // Render pages
+    // Serve pages
     CROW_ROUTE(app, "/<str>")
     ([](string page) {
         crow::mustache::context ctx;
-        return file2response("www/" + page + ".html");
+        return file2response(string(WWW_PREFIX) + page + ".html");
     });
 
     CROW_ROUTE(app, "/")
     ([]() {
         crow::mustache::context ctx;
-        return crow::response(crow::mustache::load("index.html").render());
+        //return crow::response(crow::mustache::load("index.html").render());
+        return file2response(string(WWW_PREFIX) + "index.html");
     });
 
     // Start server

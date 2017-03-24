@@ -2,6 +2,12 @@
 #include <fstream>
 #include <stdexcept>
 
+#ifdef NDEBUG
+#define PARAMETER_FILE "/etc/cb50_ctrl_params.json"
+#else
+#define PARAMETER_FILE "./cb50_ctrl_params.json"
+#endif
+
 Parameters::Parameters() {}
 Parameters::~Parameters() {}
 
@@ -30,8 +36,7 @@ bool Parameters::from_json(const nlohmann::json& p) {
 
     std::ofstream f;
     try {
-        f.open("./cb50_ctrl_params.json",
-               std::ofstream::trunc | std::ofstream::out);
+        f.open(PARAMETER_FILE, std::ofstream::trunc | std::ofstream::out);
         f << p.dump(2);
         f.close();
     } catch (std::ios_base::failure&) {
@@ -51,7 +56,7 @@ bool Parameters::from_wvalue(const crow::json::wvalue& p) {
 
 bool Parameters::load_file() {
     bool ret = false;
-    std::ifstream f{"./cb50_ctrl_params.json"};
+    std::ifstream f{PARAMETER_FILE};
     if (f.is_open()) {
         ret = from_json(nlohmann::json::parse(f));
         f.close();
