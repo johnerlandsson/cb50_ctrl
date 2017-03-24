@@ -18,9 +18,11 @@
 #include <crow.h>
 #include <iostream>
 #include <thread>
+#include <memory>
 
 #include "Parameters.h"
 #include "TrendData.h"
+#include "Log.h"
 
 #define MACHINE_CYCLE_TIME_MS 100
 #define PI_CYCLE_TIME_MS 10000
@@ -106,9 +108,12 @@ void machine_cycle() {
 
 int main(void) {
     if (!g_parameters.load_file()) {
-        cerr << "Failed to load parameter file." << endl;
+        CROW_LOG_ERROR << "Failed to load parameter file.";
         return 1;
     }
+
+    Log log;
+    crow::logger::setHandler(&log);
 
     crow::SimpleApp app;
     crow::mustache::set_base(WWW_PREFIX);
@@ -135,6 +140,7 @@ int main(void) {
                 g_parameters.from_wvalue(crow::json::load(req.body)["message"]);
                 return crow::response(200);
             } catch (...) {
+                CROW_LOG_WARNING << "Failed to convert received parameter data to wvalue.";
                 return crow::response(417);
             }
             return crow::response(500);
@@ -154,12 +160,16 @@ int main(void) {
         return file2response(string(WWW_PREFIX) + "index.html");
     });
 
+    CROW_LOG_INFO << "Application started";
+
     // Start server
     app.port(80).run();
 
     // Stop machine thread
     g_run_machine_cycle = false;
     machine_thread.join();
+
+    CROW_LOG_INFO << "Clean exit";
 
     return 0;
 }
