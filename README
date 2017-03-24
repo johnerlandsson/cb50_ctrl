@@ -1,0 +1,18 @@
+Control system for a rebuilt Camurri CB50 brewkettle.
+
+Author: John Erlandsson
+License: GPLV3
+
+cb50_ctrl - C++ application for controling I/O and serving HMI pages
+www - Web application implemented using angularjs and bootstrap
+kmod - Drivers for raspberrypi gpio
+
+
+Build
+Recommended to build in separate folder
+mkdir build
+cd build
+cmake ..
+make
+
+
