@@ -28,6 +28,16 @@ bool Parameters::from_json(const nlohmann::json& p) {
     _rp.min_output = (double)p["regulator"]["min_output"];
     _rp.max_output = (double)p["regulator"]["max_output"];
 
+    std::ofstream f;
+    try {
+        f.open("./cb50_ctrl_params.json",
+               std::ofstream::trunc | std::ofstream::out);
+        f << p.dump(2);
+        f.close();
+    } catch (std::ios_base::failure&) {
+        return false;
+    }
+
     return true;
 }
 

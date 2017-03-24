@@ -1,3 +1,4 @@
+//Function for making deep copies of objects
 function clone(obj) {
   var copy;
 
@@ -32,52 +33,61 @@ function clone(obj) {
   throw new Error("Unable to copy obj! Its type isn't supported.");
 }
 
+//The module
 angular.module("ParameterApp", ['ui-notification']).controller("ParameterCtrl", function($scope, $http, Notification) {
-  $scope.visibleState = false;
-  $scope.parameters = {
-    regulator: {
-      Kp: 0.0,
-      Ki: 0.0,
-      min_istate: 0.0,
-      max_istate: 0.0
-    }
-  };
-  $scope.parameters_bck = {};
+      $scope.visibleState = false;
+      $scope.parameters = {
+        regulator: {
+          Kp: 0.0,
+          Ki: 0.0,
+          min_istate: 0.0,
+          max_istate: 0.0
+        }
+      };
+      $scope.parameters_bck = {};
 
 
-  //Callback for send button
-  $scope.sendParameters = function() {
-    Notification.success({
-      message: "Parameters written to server"
-    });
-  };
+      //Callback for send button
+      $scope.sendParameters = function() {
+        $http.post('put_parameters', {
+          message: $scope.parameters
+        }).then(function successCallback(response) {
+            Notification.success({
+              message: "Parameters written to server"
+            });
+          }, function errorCallback(response) {
+            Notification.error({
+              message: "Failed to write parameters"
+            });
+          });
+        };
 
-  //Callback for reset button
-  $scope.resetParameters = function() {
-    $scope.parameters = clone($scope.parameters_bck);
-  };
+        //Callback for reset button
+        $scope.resetParameters = function() {
+          $scope.parameters = clone($scope.parameters_bck);
+        };
 
-  //Fetch parameters from server on load
-  window.onload = function() {
-    $http.get("get_parameters").then(function successCallback(response) {
-      $scope.visibleState = true;
-      $scope.parameters = response.data;
-      $scope.parameters_bck = clone($scope.parameters);
-    }, function errorCallback(response) {
-      Notification.error({
-        message: "Failed to receive parameters from server."
+        //Fetch parameters from server on load
+        window.onload = function() {
+          $http.get("get_parameters").then(function successCallback(response) {
+            $scope.visibleState = true;
+            $scope.parameters = response.data;
+            $scope.parameters_bck = clone($scope.parameters);
+          }, function errorCallback(response) {
+            Notification.error({
+              message: "Failed to receive parameters from server."
+            });
+          });
+        }
+
+      }).config(function(NotificationProvider) { //Configure notifications
+      NotificationProvider.setOptions({
+        delay: 10000,
+        startTop: 20,
+        startRight: 10,
+        verticalSpacing: 20,
+        horizontalSpacing: 20,
+        positionX: 'left',
+        positionY: 'bottom'
       });
     });
-  }
-
-}).config(function(NotificationProvider) {
-  NotificationProvider.setOptions({
-    delay: 10000,
-    startTop: 20,
-    startRight: 10,
-    verticalSpacing: 20,
-    horizontalSpacing: 20,
-    positionX: 'left',
-    positionY: 'bottom'
-  });
-});

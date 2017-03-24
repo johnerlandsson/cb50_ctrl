@@ -1,11 +1,11 @@
 #include <crow.h>
 #include <sys/stat.h>
 #include <chrono>
+#include <cmath>
 #include <iostream>
 #include <mutex>
 #include <thread>
 #include <vector>
-#include <cmath>
 
 #include "Parameters.h"
 #include "TrendData.h"
@@ -69,12 +69,9 @@ void machine_cycle() {
         if (pi_cycle_counter == PI_CYCLE_TIME_MS / MACHINE_CYCLE_TIME_MS - 1) {
             output = reg.regulate(0.0f, 0.0f);
             pi_cycle_counter = 0;
-            cout << "Regulating" << endl;
         }
 
         if (trend_cycle_counter >= 100) {
-            cout << "Adding trend data" << endl
-                << crow::json::dump(g_trendData.getData()) << endl;
             pv += 1.0f;
             static int tmp = 0;
             pv = 100.0 * cos(tmp * 0.1);
@@ -107,14 +104,21 @@ int main(int argc, const char* argv[]) {
     });
 
     CROW_ROUTE(app, "/get_trend")
-    ([]() {
-        return crow::response(g_trendData.getData());
-    });
+    ([]() { return crow::response(g_trendData.getData()); });
 
     CROW_ROUTE(app, "/get_parameters")
-    ([]() {
-        return crow::response(g_parameters.to_wvalue());
-    });
+    ([]() { return crow::response(g_parameters.to_wvalue()); });
+
+    CROW_ROUTE(app, "/put_parameters")
+        .methods("GET"_method, "POST"_method)([](const crow::request& req) {
+            try {
+                g_parameters.from_wvalue(crow::json::load(req.body)["message"]);
+                return crow::response(200);
+            } catch (...) {
+                return crow::response(417);
+            }
+            return crow::response(500);
+        });
 
     // Render pages
     CROW_ROUTE(app, "/<str>")
