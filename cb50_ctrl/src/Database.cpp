@@ -1,5 +1,6 @@
 #include "Database.h"
 #include <iostream>
+#include <sstream>
 
 Database::Database()
     : _db{"test.db", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE} {
@@ -73,38 +74,59 @@ void Database::insert_log(const std::string msg, const int type_id) {
     q.exec();
 }
 
-std::vector<Database::log_entry_t> Database::getLog() {
-    std::vector<log_entry_t> ret;
-
+crow::json::wvalue Database::getLog(const int level) {
     std::lock_guard<std::mutex> lock(_m);
-    SQLite::Statement q(_db,
-                        "SELECT ts, log_types_id, msg FROM log ORDER BY ts;");
+    crow::json::wvalue ret;
 
+    std::stringstream ss;
+    ss << "SELECT ts, log_types_id, msg FROM log ";
+
+    if (level >= 0 && level <= 3)
+        ss << "WHERE log_types_id=" << level << ' ';
+
+    ss << "ORDER BY ts DESC LIMIT 1000;";
+
+    SQLite::Statement q(_db, ss.str());
+
+    size_t i = 0;
     while (q.executeStep()) {
-        log_entry_t row;
-        row.ts = q.getColumn(0).getString();
-        row.type = q.getColumn(1).getInt();
-        row.msg = q.getColumn(2).getString();
-
-        ret.push_back(row);
+        ret["data"][i]["ts"] = q.getColumn(0).getString();
+        ret["data"][i]["level"] = q.getColumn(1).getInt();
+        ret["data"][i]["msg"] = q.getColumn(2).getString();
+        ++i;
     }
 
-    return ret;
+    return crow::json::load(crow::json::dump(ret));
 }
+// std::vector<Database::log_entry_t> Database::getLog() {
+// std::vector<log_entry_t> ret;
+
+// std::lock_guard<std::mutex> lock(_m);
+// SQLite::Statement q(_db,
+//"SELECT ts, log_types_id, msg FROM log ORDER BY ts;");
+
+// while (q.executeStep()) {
+// log_entry_t row;
+// row.ts = q.getColumn(0).getString();
+// row.type = q.getColumn(1).getInt();
+// row.msg = q.getColumn(2).getString();
+
+// ret.push_back(row);
+//}
+
+// return ret;
+//}
 crow::json::wvalue Database::getParameters() {
     std::lock_guard<std::mutex> lock(_m);
-    SQLite::Statement q(_db, 
-            "SELECT json FROM parameters WHERE id='0';");
-    if (q.executeStep())
-        return crow::json::load(q.getColumn(0).getString());
+    SQLite::Statement q(_db, "SELECT json FROM parameters WHERE id='0';");
+    if (q.executeStep()) return crow::json::load(q.getColumn(0).getString());
 
-   return crow::json::wvalue();
+    return crow::json::wvalue();
 }
 
 void Database::updateParameters(const crow::json::wvalue p) {
     std::lock_guard<std::mutex> lock(_m);
-    SQLite::Statement q(_db,
-            "UPDATE parameters SET json=? WHERE id='0';");
+    SQLite::Statement q(_db, "UPDATE parameters SET json=? WHERE id='0';");
     q.bind(1, crow::json::dump(p));
     q.exec();
 }

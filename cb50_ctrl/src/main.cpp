@@ -125,6 +125,15 @@ int main(void) {
         return file2response(string(WWW_PREFIX) + "assets/" + folder + '/' + file);
     });
 
+    // Send log
+    CROW_ROUTE(app, "/get_log")
+    ([]() { return crow::response(g_db.getLog()); });
+
+    CROW_ROUTE(app, "/get_log/<int>")
+    ([](int level) {
+        return crow::response(g_db.getLog(level));
+    });
+
     // Route trend data
     CROW_ROUTE(app, "/get_trend")
     ([]() { return crow::response(g_trendData.getData()); });

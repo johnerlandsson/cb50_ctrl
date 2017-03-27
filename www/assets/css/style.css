@@ -16,6 +16,24 @@
   text-align: center;
 }
 
+.container-rdo_group {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 150%;
+}
+.container-rdo_group input[type="radio"] {
+  margin-right: 10px;
+  vertical-align: center;
+  margin-top: -1px;
+}
+
+.container-log-table {
+  margin-top: 20px;
+}
+.log-table {
+  width: 100%;
+}
+
 .buttons {
   text-align: right;
 }

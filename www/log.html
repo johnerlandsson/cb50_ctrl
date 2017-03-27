@@ -25,6 +25,9 @@
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/font-awesome.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.js"></script>
+    <script src="assets/js/log.js"></script>
+    <script src="assets/js/angular-ui-notification.min.js"></script>
     <script src="assets/js/jquery.min.js"></script>
     <script src="assets/js/bootstrap.min.js"></script>
     <title>CB50 Control - Log</title>
@@ -50,8 +53,33 @@
             </div>
         </div>
     </nav>
-    <div class="container">
-        <p> This will show the log</p>
+    <div class="container" ng-app="LogApp" ng-controller="LogCtrl">
+        <div class="container-rdo_group">
+            <label for="rdo_all"><i class="fa fa-list"></i></label>
+            <input type="radio" name="rdo_group" id="rdo_all" ng-checked="rdo_all" ng-click="all_clicked()" >
+            <label for="rdo_info"><i class="fa fa-info-circle"></i></label>
+            <input type="radio" name="rdo_group" id="rdo_info" ng-checked="rdo_info" ng-click="info_clicked()">
+            <label for="rdo_warning"><i class="fa fa-exclamation-triangle"></i></label>
+            <input type="radio" name="rdo_group" id="rdo_warning" ng-checked="rdo_warning" ng-click="warning_clicked()">
+            <label for="rdo_error"><i class="fa fa-minus-circle"></i></label>
+            <input type="radio" name="rdo_group" id="rdo_error" ng-checked="rdo_error" ng-click="error_clicked()">
+            <label for="rdo_debug"><i class="fa fa-bug"></i></label>
+            <input type="radio" name="rdo_group" id="rdo_debug" ng-checked="rdo_debug" ng-click="debug_clicked()">
+        </div>
+        <div class="container-log-table">
+            <table class="log-table">
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Level</th>
+                    <th>Message</th>
+                </tr>
+                <tr ng-repeat="r in log">
+                    <td>{{ r.ts }}</td>
+                    <td><i class="fa {{ r.level }}"></i></td>
+                    <td>{{ r.msg }}</td>
+                </tr>
+            </table>
+        </div>
     </div>
 </body>
 

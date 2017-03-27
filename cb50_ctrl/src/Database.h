@@ -21,7 +21,8 @@ class Database : public crow::ILogHandler {
     Database();
     virtual ~Database();
     void log(std::string message, crow::LogLevel level) override;
-    std::vector<log_entry_t> getLog();
+    //std::vector<log_entry_t> getLog();
+    crow::json::wvalue getLog(const int level = -1);
     crow::json::wvalue getParameters();
     void updateParameters(const crow::json::wvalue p);
     PIRegulator::parameters_t getRegulatorParameters();
