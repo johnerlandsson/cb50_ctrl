@@ -20,9 +20,9 @@
 #include <thread>
 #include <memory>
 
-#include "Parameters.h"
 #include "TrendData.h"
-#include "Log.h"
+#include "PIRegulator.h"
+#include "Database.h"
 
 #define MACHINE_CYCLE_TIME_MS 100
 #define PI_CYCLE_TIME_MS 10000
@@ -37,8 +37,8 @@ using namespace std;
 
 // Global variables
 bool g_run_machine_cycle = true;
-Parameters g_parameters;
 TrendData g_trendData;
+Database g_db;
 
 /* file2response
  * Try to open the given filename and convert it to a crow::response
@@ -74,7 +74,7 @@ inline bool file_exists(const std::string& p) {
  * Handle I/O and temperature regulator
  */
 void machine_cycle() {
-    PIRegulator reg{g_parameters.getRegulatorParameters()};
+    PIRegulator reg{g_db.getRegulatorParameters()};
     int pi_cycle_counter{0};
     int trend_cycle_counter{0};
     double sv{20.0f};
@@ -107,13 +107,13 @@ void machine_cycle() {
 }
 
 int main(void) {
-    if (!g_parameters.load_file()) {
-        CROW_LOG_ERROR << "Failed to load parameter file.";
-        return 1;
-    }
+    //if (!g_parameters.load_file()) {
+        //CROW_LOG_ERROR << "Failed to load parameter file.";
+        //return 1;
+    //}
 
-    Log log;
-    crow::logger::setHandler(&log);
+    //Log log;
+    crow::logger::setHandler(&g_db);
 
     crow::SimpleApp app;
     crow::mustache::set_base(WWW_PREFIX);
@@ -131,13 +131,16 @@ int main(void) {
 
     // Send parameters
     CROW_ROUTE(app, "/get_parameters")
-    ([]() { return crow::response(g_parameters.to_wvalue()); });
+    ([]() { return crow::response(g_db.getParameters()); });
+    //CROW_ROUTE(app, "/get_parameters")
+    //([]() { return crow::response(g_parameters.to_wvalue()); });
 
     //Receive parameters
     CROW_ROUTE(app, "/put_parameters")
         .methods("GET"_method, "POST"_method)([](const crow::request& req) {
             try {
-                g_parameters.from_wvalue(crow::json::load(req.body)["message"]);
+                auto c = crow::json::load(req.body);
+                g_db.updateParameters(c["message"]);
                 return crow::response(200);
             } catch (...) {
                 CROW_LOG_WARNING << "Failed to convert received parameter data to wvalue.";
@@ -145,6 +148,17 @@ int main(void) {
             }
             return crow::response(500);
         });
+    //CROW_ROUTE(app, "/put_parameters")
+        //.methods("GET"_method, "POST"_method)([](const crow::request& req) {
+            //try {
+                //g_parameters.from_wvalue(crow::json::load(req.body)["message"]);
+                //return crow::response(200);
+            //} catch (...) {
+                //CROW_LOG_WARNING << "Failed to convert received parameter data to wvalue.";
+                //return crow::response(417);
+            //}
+            //return crow::response(500);
+        //});
 
     // Serve pages
     CROW_ROUTE(app, "/<str>")

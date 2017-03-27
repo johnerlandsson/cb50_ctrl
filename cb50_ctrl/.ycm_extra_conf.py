@@ -83,6 +83,7 @@ flags = [
 './tests/gmock/include',
 '-I../third_party/crow/include',
 '-I../third_party/json/src',
+'-I../third_party/SQLiteCpp/include',
 ]
 
 
