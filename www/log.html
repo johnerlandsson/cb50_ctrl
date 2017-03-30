@@ -56,11 +56,12 @@
     <div class="container" ng-app="LogApp" ng-controller="LogCtrl">
         <div class="container-rdo_group">
             <label for="rdo_all"><i class="fa fa-list"></i></label>
-            <input type="radio" name="rdo_group" id="rdo_all" ng-checked="rdo_all" ng-click="all_clicked()" >
+            <input type="radio" name="rdo_group" id="rdo_all" ng-checked="rdo_all" ng-click="all_clicked()">
             <label for="rdo_info"><i class="fa fa-info-circle"></i></label>
             <input type="radio" name="rdo_group" id="rdo_info" ng-checked="rdo_info" ng-click="info_clicked()">
             <label for="rdo_warning"><i class="fa fa-exclamation-triangle"></i></label>
-            <input type="radio" name="rdo_group" id="rdo_warning" ng-checked="rdo_warning" ng-click="warning_clicked()">
+            <input type="radio" name="rdo_group" id="rdo_warning" ng-checked="rdo_warning"
+                ng-click="warning_clicked()">
             <label for="rdo_error"><i class="fa fa-minus-circle"></i></label>
             <input type="radio" name="rdo_group" id="rdo_error" ng-checked="rdo_error" ng-click="error_clicked()">
             <label for="rdo_debug"><i class="fa fa-bug"></i></label>
@@ -81,6 +82,11 @@
             </table>
         </div>
     </div>
+    <footer class="footer">
+        <div class="container">
+            <img class="footer-logo"src="assets/img/logo_full_w800.png"></img>
+        </div>
+    </footer>
 </body>
 
 </html>

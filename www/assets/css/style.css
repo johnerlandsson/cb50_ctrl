@@ -1,3 +1,16 @@
+html {
+	position: relative;
+	min-height: 100%;
+}
+body {
+	margin-bottom: 270px;
+	clear: both;
+}
+
+.container {
+    height: 100%;
+}
+	
 .container-page-icon {
     padding-top: 30px;
     padding-bottom: 30px;
@@ -16,10 +29,25 @@
   text-align: center;
 }
 
+.container-param {
+  margin-top: 100px; 
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.container-param table{
+    max-width: 400px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 30px;
+}
+
 .container-rdo_group {
   text-align: center;
   margin-top: 20px;
   font-size: 150%;
+  margin-top: 100px;
 }
 .container-rdo_group input[type="radio"] {
   margin-right: 10px;
@@ -39,7 +67,6 @@
 }
 
 .buttons a {
-  /*color: #1abc9c !important;*/
   margin-left: 10px;
   margin-right: 10px;
 }
@@ -64,7 +91,31 @@
   margin-bottom: 0;
   font-size: 12px;
   letter-spacing: 5px;
+  background: linear-gradient(to right, rgb(60, 0, 0), rgb(200, 0, 0), rgb(60, 0, 0));
 }
+.navbar  a {
+  /*color: rgb(204, 204, 204) !important;*/
+  color: white !important;
+}
+
 .navbar-nav  li a:hover {
-  color: #1abc9c !important;
+  color: rgb(128, 128, 128) !important;
+}
+
+.footer {
+    margin-top: 50px;
+    text-align: center;
+    background: black;
+    background-image: url("../img/footer-bg.png");
+    padding: 30px;
+    bottom: 0;
+    position: absolute;
+    width: 100%
+}
+
+.footer-logo {
+    max-width: 400px;
+    width: 100%;
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
