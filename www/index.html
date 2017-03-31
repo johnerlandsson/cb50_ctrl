@@ -25,8 +25,11 @@
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/font-awesome.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.js"></script>
     <script src="assets/js/jquery.min.js"></script>
     <script src="assets/js/bootstrap.min.js"></script>
+    <script src="assets/js/recipe.js"></script>
+    <script src="assets/js/angular-ui-notification.min.js"></script>
     <title>CB50 Control - Recipe</title>
 </head>
 
@@ -50,12 +53,12 @@
             </div>
         </div>
     </nav>
-    <div class="container">
+    <div class="container" ng-app="RecipeApp" ng-controller="RecipeCtrl">
         <div class="main-toolbar">
             <div class="btn-group">
-                <button type="button" class="btn btn-primary" alt="Run recipe"><i class="fa fa-play" area-hidden="true"></i></button>
-                <button type="button" class="btn btn-primary" alt="Mixer"><i class="fa fa-random" area-hidden="true"></i></button>
-                <button type="button" class="btn btn-primary" alt="Pump"><i class="fa fa-shower" area-hidden="true"></i></button>
+                <button type="button" class="btn btn-primary" alt="Run recipe" ng-click="run_btn_clicked()"><i class="fa fa-play fa-2x" area-hidden="true"></i></button>
+                <button type="button" class="btn btn-primary" alt="Mixer" ng-click="mixer_btn_clicked()"><i class="fa fa-random fa-2x" area-hidden="true"></i></button>
+                <button type="button" class="btn btn-primary" alt="Pump"ng-click="pump_btn_clicked()"><i class="fa fa-shower fa-2x"></i></button>
             </div>
         </div>
         <p> Här hamnar receptet</p>

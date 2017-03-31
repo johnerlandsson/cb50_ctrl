@@ -14,3 +14,5 @@ www/assets/js/chart
 .CMakeLists.txt.swp
 build
 cb50_ctrl/src/.*.swp
+schematic/#panel.sch#
+schematic/panel.sch~
