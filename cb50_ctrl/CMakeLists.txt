@@ -15,7 +15,3 @@ target_link_libraries(cb50_ctrl boost_system)
 target_link_libraries(cb50_ctrl pthread)
 target_link_libraries(cb50_ctrl sqlite3)
 target_link_libraries(cb50_ctrl ${CMAKE_CURRENT_SOURCE_DIR}/../third_party/SQLiteCpp/libSQLiteCpp.a)
-message("Copying parameter file.")
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../cb50_ctrl_params.json 
-               ${CMAKE_CURRENT_BINARY_DIR} 
-               COPYONLY) 
