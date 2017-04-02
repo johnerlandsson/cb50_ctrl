@@ -17,8 +17,12 @@
 */
 
 #include <crow.h>
+#include <algorithm>
+#include <cctype>
+#include <iomanip>
 #include <iostream>
 #include <memory>
+#include <sstream>
 #include <thread>
 
 #include "Database.h"
@@ -43,6 +47,15 @@ bool g_run_machine_cycle = true;
 TrendData g_trendData;
 Database g_db;
 ProcessData g_process_data;
+
+bool str2bool(const string str) {
+    string str_lc;
+    std::transform(str.begin(), str.end(), str_lc.begin(), ::tolower);
+    istringstream is(str_lc);
+    bool ret;
+    is >> std::boolalpha >> ret;
+    return ret;
+}
 
 /* file2response
  * Try to open the given filename and convert it to a crow::response
@@ -145,14 +158,15 @@ int main(void) {
     CROW_ROUTE(app, "/put_pd")
         .methods("GET"_method, "POST"_method)([](const crow::request& req) {
             try {
-                auto c = crow::json::load(req.body);
-                g_process_data.setPump(stod(crow::json::dump(c["pump"])));
-                g_process_data.setMixer(stod(crow::json::dump(c["mixer"])));
-                g_process_data.setRunRecipe(stod(crow::json::dump(c["run_recipe"])));
+                auto c = crow::json::load(req.body)["message"];
+                g_process_data.setPump(str2bool(crow::json::dump(c["pump"])));
+                g_process_data.setMixer(str2bool(crow::json::dump(c["mixer"])));
+                g_process_data.setRunRecipe(
+                    str2bool(crow::json::dump(c["run_recipe"])));
                 return crow::response(200);
-            } catch (...) {
-                CROW_LOG_WARNING
-                    << "Failed to convert received parameter data to wvalue.";
+            } catch (const exception& e) {
+                CROW_LOG_WARNING << "Caught exception when receiving process data. "
+                                 << e.what();
                 return crow::response(417);
             }
             return crow::response(500);
