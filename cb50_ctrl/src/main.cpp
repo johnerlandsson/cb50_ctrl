@@ -23,6 +23,7 @@
 
 #include "Database.h"
 #include "PIRegulator.h"
+#include "ProcessData.h"
 #include "ProcessValue.h"
 #include "TrendData.h"
 
@@ -37,27 +38,11 @@
 
 using namespace std;
 
-enum class MachineState { Stopped, Warming, AtTemp };
-
 // Global variables
 bool g_run_machine_cycle = true;
 TrendData g_trendData;
 Database g_db;
-crow::json::wvalue g_process_data;
-std::mutex g_process_data_mutex;
-
-string machinestate2string(const MachineState& s) {
-    switch (s) {
-        case MachineState::Warming:
-            return "warming";
-        case MachineState::AtTemp:
-            return "at temp";
-        default:
-            break;
-    }
-
-    return "stopped";
-}
+ProcessData g_process_data;
 
 /* file2response
  * Try to open the given filename and convert it to a crow::response
@@ -102,23 +87,23 @@ void machine_cycle() {
     double sv{20.0f};
     double output{0.0f};
     constexpr auto cycle_duration = chrono::milliseconds(MACHINE_CYCLE_TIME_MS);
-    auto state = MachineState::Stopped;
     ProcessValue temp_sensor;
 
     while (g_run_machine_cycle) {
-// Read temperature
+// Read process data
 #ifdef DRY_RUN
         sensor.calculate();
 #endif
-        double pv = temp_sensor.getValue();
+        g_process_data.setPv(temp_sensor.getValue());
 
         auto cycle_started = chrono::system_clock::now();
 
         // Calculate new output
-        if (state == MachineState::Warming || state == MachineState::AtTemp) {
+        if (g_process_data.getRunRecipe()) {
             if (pi_cycle_counter ==
                 PI_CYCLE_TIME_MS / MACHINE_CYCLE_TIME_MS - 1) {
-                output = reg.regulate(sv, pv);
+                g_process_data.setOutput(reg.regulate(g_process_data.getSv(),
+                                                      g_process_data.getPv()));
                 pi_cycle_counter = 0;
             }
         } else {
@@ -126,17 +111,10 @@ void machine_cycle() {
         }
 
         if (trend_cycle_counter >= 100) {
-            g_trendData.append(sv, pv, output);
+            g_trendData.append(g_process_data.getSv(), g_process_data.getPv(),
+                               g_process_data.getOutput());
             trend_cycle_counter = 0;
         }
-
-        // Update process data
-        g_process_data_mutex.lock();
-        g_process_data["sv"] = sv;
-        g_process_data["pv"] = pv;
-        g_process_data["output"] = output;
-        g_process_data["state"] = machinestate2string(state);
-        g_process_data_mutex.unlock();
 
         this_thread::sleep_until(cycle_started + cycle_duration);
 
@@ -146,12 +124,6 @@ void machine_cycle() {
 }
 
 int main(void) {
-    // if (!g_parameters.load_file()) {
-    // CROW_LOG_ERROR << "Failed to load parameter file.";
-    // return 1;
-    //}
-
-    // Log log;
     crow::logger::setHandler(&g_db);
 
     crow::SimpleApp app;
@@ -167,10 +139,24 @@ int main(void) {
 
     // Send process data
     CROW_ROUTE(app, "/get_pd")
-    ([]() {
-        std::lock_guard<mutex> lock(g_process_data_mutex);
-        return crow::response(g_process_data);
-    });
+    ([]() { return crow::response(g_process_data.toWvalue()); });
+
+    // Receive process data
+    CROW_ROUTE(app, "/put_pd")
+        .methods("GET"_method, "POST"_method)([](const crow::request& req) {
+            try {
+                auto c = crow::json::load(req.body);
+                g_process_data.setPump(stod(crow::json::dump(c["pump"])));
+                g_process_data.setMixer(stod(crow::json::dump(c["mixer"])));
+                g_process_data.setRunRecipe(stod(crow::json::dump(c["run_recipe"])));
+                return crow::response(200);
+            } catch (...) {
+                CROW_LOG_WARNING
+                    << "Failed to convert received parameter data to wvalue.";
+                return crow::response(417);
+            }
+            return crow::response(500);
+        });
 
     // Send log
     CROW_ROUTE(app, "/get_log")

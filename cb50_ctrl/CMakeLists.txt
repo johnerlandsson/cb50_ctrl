@@ -4,6 +4,7 @@ set(SRCS src/main.cpp
 	src/PIRegulator.cpp
 	src/TrendData.cpp
 	src/Database.cpp
+    src/ProcessData.cpp
     src/ProcessValue.cpp)
 
 add_executable(cb50_ctrl ${SRCS})
