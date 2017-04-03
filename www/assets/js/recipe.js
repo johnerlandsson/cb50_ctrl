@@ -105,6 +105,8 @@ angular.module("RecipeApp", ['ui-notification']).controller("RecipeCtrl", functi
   $scope.run_btn_clicked = function() {
     window.clearInterval($scope.intervalID);
     $scope.pd["run_recipe"] = !$scope.pd["run_recipe"];
+    $scope.recipeViewerVisible = $scope.pd["run_recipe"];
+    $scope.recipeBrowserVisible = !$scope.recipeViewerVisible;
 		set_run_button_bg();
     $http.post('put_pd', {
       message: $scope.pd
