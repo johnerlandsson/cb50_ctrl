@@ -48,10 +48,9 @@ TrendData g_trendData;
 Database g_db;
 ProcessData g_process_data;
 
-bool str2bool(const string str) {
-    string str_lc;
-    std::transform(str.begin(), str.end(), str_lc.begin(), ::tolower);
-    istringstream is(str_lc);
+bool str2bool(string s) {
+    std::transform(s.begin(), s.end(), s.begin(), ::tolower);
+    istringstream is(s);
     bool ret;
     is >> std::boolalpha >> ret;
     return ret;
@@ -163,7 +162,8 @@ int main(void) {
                 g_process_data.setMixer(str2bool(crow::json::dump(c["mixer"])));
                 g_process_data.setRunRecipe(
                     str2bool(crow::json::dump(c["run_recipe"])));
-                return crow::response(200);
+
+                return crow::response(g_process_data.toWvalue());
             } catch (const exception& e) {
                 CROW_LOG_WARNING << "Caught exception when receiving process data. "
                                  << e.what();
