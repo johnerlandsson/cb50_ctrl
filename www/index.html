@@ -57,9 +57,12 @@
     <div class="container" ng-app="RecipeApp" ng-controller="RecipeCtrl">
         <div class="main-toolbar">
             <div class="btn-group">
-                <button type="button" class="btn btn-primary" alt="Run recipe" ng-click="run_btn_clicked()"><i class="fa fa-play fa-2x" area-hidden="true"></i></button>
-                <button type="button" class="btn btn-primary" alt="Mixer" ng-click="mixer_btn_clicked()"><i class="fa fa-random fa-2x" area-hidden="true"></i></button>
-                <button type="button" class="btn btn-primary" alt="Pump"ng-click="pump_btn_clicked()"><i class="fa fa-shower fa-2x"></i></button>
+                <button type="button" class="btn btn-primary" alt="Run recipe" ng-click="run_btn_clicked()"
+                    ng-style="run_btn_style"><i class="fa fa-play fa-2x" area-hidden="true"></i></button>
+                <button type="button" class="btn btn-primary" alt="Mixer" ng-click="mixer_btn_clicked()"
+                    ng-style="mixer_btn_style"><i class="fa fa-random fa-2x" area-hidden="true"></i></button>
+                <button type="button" class="btn btn-primary" alt="Pump" ng-click="pump_btn_clicked()"
+                    ng-style="pump_btn_style"><i class="fa fa-shower fa-2x"></i></button>
             </div>
         </div>
         <p> Här hamnar receptet</p>
