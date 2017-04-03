@@ -18,7 +18,10 @@
 //The module
 angular.module("RecipeApp", ['ui-notification']).controller("RecipeCtrl", function($scope, $http, Notification) {
   $scope.pd = {};
+  $scope.recipeBrowserVisible = false;
+  $scope.recipeViewerVisible = false;
 
+  // Fetch process data from server
   function get_pd() {
     $http.get("get_pd").then(function successCallback(response) {
       $scope.pd = response.data;
@@ -30,10 +33,7 @@ angular.module("RecipeApp", ['ui-notification']).controller("RecipeCtrl", functi
     });
   }
 
-  function update_pd() {
-    get_pd();
-
-		// Set button colors
+  function set_pump_button_bg() {
     if ($scope.pd["pump"]) {
       $scope.pump_btn_style = {
         "background-color": "rgb(102, 102, 102)"
@@ -43,6 +43,9 @@ angular.module("RecipeApp", ['ui-notification']).controller("RecipeCtrl", functi
         "background-color": "rgb(153, 153, 153)"
       };
     }
+  }
+
+  function set_mixer_button_bg() {
     if ($scope.pd["mixer"]) {
       $scope.mixer_btn_style = {
         "background-color": "rgb(102, 102, 102)"
@@ -52,6 +55,9 @@ angular.module("RecipeApp", ['ui-notification']).controller("RecipeCtrl", functi
         "background-color": "rgb(153, 153, 153)"
       };
     }
+  }
+
+  function set_run_button_bg() {
     if ($scope.pd["run_recipe"]) {
       $scope.run_btn_style = {
         "background-color": "rgb(102, 102, 102)"
@@ -63,12 +69,26 @@ angular.module("RecipeApp", ['ui-notification']).controller("RecipeCtrl", functi
     }
   }
 
+  // Fetch process data from server and update view accordingly
+  function update_pd() {
+    get_pd();
+
+    // Set button colors
+    set_pump_button_bg();
+    set_mixer_button_bg();
+		set_run_button_bg();
+
+    $scope.recipeViewerVisible = $scope.pd["run_recipe"];
+    $scope.recipeBrowserVisible = !$scope.recipeViewerVisible;
+  }
+
   $scope.intervalID = window.setInterval(update_pd, 500);
 
   // Pump button clicked
   $scope.pump_btn_clicked = function() {
     window.clearInterval($scope.intervalID);
     $scope.pd["pump"] = !$scope.pd["pump"];
+    set_pump_button_bg();
     $http.post('put_pd', {
       message: $scope.pd
     }).then(function successCallback(response) {
@@ -85,6 +105,7 @@ angular.module("RecipeApp", ['ui-notification']).controller("RecipeCtrl", functi
   $scope.run_btn_clicked = function() {
     window.clearInterval($scope.intervalID);
     $scope.pd["run_recipe"] = !$scope.pd["run_recipe"];
+		set_run_button_bg();
     $http.post('put_pd', {
       message: $scope.pd
     }).then(function successCallback(response) {
@@ -101,6 +122,7 @@ angular.module("RecipeApp", ['ui-notification']).controller("RecipeCtrl", functi
   $scope.mixer_btn_clicked = function() {
     window.clearInterval($scope.intervalID);
     $scope.pd["mixer"] = !$scope.pd["mixer"];
+		set_mixer_button_bg();
     $http.post('put_pd', {
       message: $scope.pd
     }).then(function successCallback(response) {

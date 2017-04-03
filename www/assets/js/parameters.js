@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU General Public License 
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 //Function for making deep copies of objects
 function clone(obj) {
@@ -52,59 +52,81 @@ function clone(obj) {
 
 //The module
 angular.module("ParameterApp", ['ui-notification']).controller("ParameterCtrl", function($scope, $http, Notification) {
-      $scope.visibleState = false;
-      $scope.parameters = {
-        regulator: {
-          Kp: 0.0,
-          Ki: 0.0,
-          min_istate: 0.0,
-          max_istate: 0.0
-        }
-      };
-      $scope.parameters_bck = {};
+  $scope.parametersLoaded = false;
+  $scope.runMsgVisible = false;
+  $scope.spinnerVisible = true;
+  $scope.parametersVisible = false;
+
+  $scope.parameters = {
+    regulator: {
+      Kp: 0.0,
+      Ki: 0.0,
+      min_istate: 0.0,
+      max_istate: 0.0
+    }
+  };
+  $scope.parameters_bck = {};
 
 
-      //Callback for send button
-      $scope.sendParameters = function() {
-        $http.post('put_parameters', {
-          message: $scope.parameters
-        }).then(function successCallback(response) {
-            Notification.success({
-              message: "Parameters written to server"
-            });
-          }, function errorCallback(response) {
-            Notification.error({
-              message: "Failed to write parameters"
-            });
-          });
-        };
-
-        //Callback for reset button
-        $scope.resetParameters = function() {
-          $scope.parameters = clone($scope.parameters_bck);
-        };
-
-        //Fetch parameters from server on load
-        window.onload = function() {
-          $http.get("get_parameters").then(function successCallback(response) {
-            $scope.visibleState = true;
-            $scope.parameters = response.data;
-            $scope.parameters_bck = clone($scope.parameters);
-          }, function errorCallback(response) {
-            Notification.error({
-              message: "Failed to receive parameters from server."
-            });
-          });
-        }
-
-      }).config(function(NotificationProvider) { //Configure notifications
-      NotificationProvider.setOptions({
-        delay: 10000,
-        startTop: 20,
-        startRight: 10,
-        verticalSpacing: 20,
-        horizontalSpacing: 20,
-        positionX: 'left',
-        positionY: 'bottom'
+  //Callback for send button
+  $scope.sendParameters = function() {
+    $http.post('put_parameters', {
+      message: $scope.parameters
+    }).then(function successCallback(response) {
+      Notification.success({
+        message: "Parameters written to server"
+      });
+    }, function errorCallback(response) {
+      Notification.error({
+        message: "Failed to write parameters"
       });
     });
+  };
+
+  //Callback for reset button
+  $scope.resetParameters = function() {
+    $scope.parameters = clone($scope.parameters_bck);
+  };
+
+  //Fetch parameters and process data from server on load
+  window.onload = function() {
+    //Fetch parameters
+    $http.get("get_parameters").then(function successCallback(response) {
+      $scope.parameters = response.data;
+      $scope.parameters_bck = clone($scope.parameters);
+      $scope.parametersLoaded = true;
+    }, function errorCallback(response) {
+      Notification.error({
+        message: "Failed to receive parameters from server."
+      });
+    });
+    // Fetch process data and check if recipe is running
+    $http.get("get_pd").then(function successCallback(response) {
+        if (response.data["run_recipe"]) {
+          $scope.runMsgVisible = true;
+          $scope.spinnerVisible = false;
+        } else {
+          if ($scope.parametersLoaded) {
+            $scope.spinnerVisible = false;
+            $scope.parametersVisible = true;
+          }
+        }
+      },
+      function errorCallback(response) {
+        Notification.error({
+          message: "Failed to receive process data from server."
+        });
+      });
+  }
+
+}).config(function(NotificationProvider) { //Configure notifications
+  NotificationProvider.setOptions({
+    delay: 10000,
+    startTop: 20,
+    startRight: 10,
+    verticalSpacing: 20,
+    horizontalSpacing: 20,
+    positionX: 'left',
+    positionY: 'bottom'
+  });
+});

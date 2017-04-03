@@ -55,10 +55,13 @@
         </div>
     </nav>
     <div class="container" ng-app="ParameterApp" ng-controller="ParameterCtrl">
-        <div class="container-spinner" ng-show="!visibleState">
+        <div class="container-run-msg" ng-show="runMsgVisible">
+		<h3><i class="fa fa-exclamation-triangle"></i>Please stop recipe before editing parameters</h3>
+        </div>
+        <div class="container-spinner" ng-show="spinnerVisible">
             <i class="fa fa-spinner fa-spin fa-5x"></i>
         </div>
-        <div class="container-param" ng-show="visibleState">
+        <div class="container-param" ng-show="parametersVisible">
             <h3>Regulator parameters</h3>
             <table class="table table-striped">
                 <thead>

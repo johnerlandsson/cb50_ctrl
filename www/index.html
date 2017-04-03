@@ -65,7 +65,12 @@
                     ng-style="pump_btn_style"><i class="fa fa-shower fa-2x"></i></button>
             </div>
         </div>
-        <p> Här hamnar receptet</p>
+        <div class="container-recipe-browser" ng-show="recipeBrowserVisible">
+            Recipe browser
+        </div>
+        <div class="container-recipe-viewer" ng-show="recipeViewerVisible">
+            Recipe viewer
+        </div>
     </div>
     <footer class="footer">
         <div class="container">
