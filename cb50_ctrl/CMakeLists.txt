@@ -1,3 +1,4 @@
+cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
 
 #add_subdirectory(third_party)
 set(SRCS src/main.cpp
@@ -9,7 +10,7 @@ set(SRCS src/main.cpp
 
 add_executable(cb50_ctrl ${SRCS})
 
-target_compile_features(cb50_ctrl PRIVATE cxx_range_for)
+target_compile_features(cb50_ctrl PRIVATE cxx_lambda_init_captures)
 include_directories(../third_party/crow/include/)
 include_directories(../third_party/SQLiteCpp/include)
 target_link_libraries(cb50_ctrl boost_system)
