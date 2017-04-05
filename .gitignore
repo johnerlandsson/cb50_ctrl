@@ -16,3 +16,6 @@ build
 cb50_ctrl/src/.*.swp
 schematic/#panel.sch#
 schematic/panel.sch~
+schematic/rpi_interface/rpi_interface.kicad_pcb-bak
+schematic/rpi_interface/rpi_interface.bak
+schematic/rpi_interface/rpi_interface-cache.lib
