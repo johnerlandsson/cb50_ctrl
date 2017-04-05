@@ -96,8 +96,6 @@ void machine_cycle() {
     PIRegulator reg{g_db.getRegulatorParameters()};
     int pi_cycle_counter{0};
     int trend_cycle_counter{0};
-    double sv{20.0f};
-    double output{0.0f};
     constexpr auto cycle_duration = chrono::milliseconds(MACHINE_CYCLE_TIME_MS);
     ProcessValue temp_sensor;
 
@@ -119,7 +117,7 @@ void machine_cycle() {
                 pi_cycle_counter = 0;
             }
         } else {
-            output = 0.0f;
+            g_process_data.setOutput(0.0f);
         }
 
         if (trend_cycle_counter >= 100) {
