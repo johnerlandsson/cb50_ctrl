@@ -30,6 +30,7 @@
 #include "ProcessData.h"
 #include "ProcessValue.h"
 #include "TrendData.h"
+#include "Recipe.h"
 
 #define MACHINE_CYCLE_TIME_MS 100
 #define PI_CYCLE_TIME_MS 10000
