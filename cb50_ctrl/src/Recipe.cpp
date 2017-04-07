@@ -11,7 +11,7 @@ void Recipe::fromWvalue(crow::json::wvalue r) {
     _entries.clear();
 
     int i = 0;
-    while (r[i].estimate_length() > 0) {
+    while (r[i].count("name") > 0) {
         recipe_entry_t et;
         et.name = crow::json::dump(r[i]["name"]);
         et.dur =

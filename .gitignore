@@ -19,3 +19,7 @@ schematic/panel.sch~
 schematic/rpi_interface/rpi_interface.kicad_pcb-bak
 schematic/rpi_interface/rpi_interface.bak
 schematic/rpi_interface/rpi_interface-cache.lib
+schematic/rpi_interface/rpi_interface.bin
+schematic/rpi_interface/rpi_interface.dsn
+schematic/rpi_interface/rpi_interface.ses
+schematic/rpi_interface/outp
