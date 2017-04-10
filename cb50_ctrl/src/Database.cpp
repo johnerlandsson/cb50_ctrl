@@ -1,17 +1,18 @@
-/* 
- * This file is part of the cb50_ctrl distribution (https://github.com/johnerlandsson/cb50_ctrl).
+/*
+ * This file is part of the cb50_ctrl distribution
+ * (https://github.com/johnerlandsson/cb50_ctrl).
  * Copyright (c) 2017 John Erlandsson
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
@@ -51,6 +52,16 @@ Database::Database()
         "INSERT OR IGNORE INTO 'main'.'parameters' (id, json)"
         "VALUES (0, '{\"regulator\": { \"ki\": 0, \"kp\": 10, \"max_istate\": "
         "200, \"min_istate\": -200 }}');");
+    _db.exec(
+        "CREATE TABLE IF NOT EXISTS 'main'.'recipes' ("
+        "'id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
+        "'recipe' TEXT NOT NULL,"
+        "'name' TEXT NOT NULL);");
+    _db.exec(
+        "INSERT OR IGNORE INTO 'main'.'recipes' (id, recipe, name)"
+        "VALUES (0, '{[{\"sv\": 65, \"time\": 60, \"confirm\": false},"
+        "{\"sv\": 76, \"time\": 10, \"confirm\": true},"
+        "{\"sv\": 101, \"time\": 90, \"confirm\": false}]', 'default');");
 }
 
 Database::~Database() {}
@@ -98,8 +109,7 @@ crow::json::wvalue Database::getLog(const int level) {
     std::stringstream ss;
     ss << "SELECT ts, log_types_id, msg FROM log ";
 
-    if (level >= 0 && level <= 3)
-        ss << "WHERE log_types_id=" << level << ' ';
+    if (level >= 0 && level <= 3) ss << "WHERE log_types_id=" << level << ' ';
 
     ss << "ORDER BY ts DESC LIMIT 1000;";
 
@@ -115,24 +125,7 @@ crow::json::wvalue Database::getLog(const int level) {
 
     return crow::json::load(crow::json::dump(ret));
 }
-// std::vector<Database::log_entry_t> Database::getLog() {
-// std::vector<log_entry_t> ret;
 
-// std::lock_guard<std::mutex> lock(_m);
-// SQLite::Statement q(_db,
-//"SELECT ts, log_types_id, msg FROM log ORDER BY ts;");
-
-// while (q.executeStep()) {
-// log_entry_t row;
-// row.ts = q.getColumn(0).getString();
-// row.type = q.getColumn(1).getInt();
-// row.msg = q.getColumn(2).getString();
-
-// ret.push_back(row);
-//}
-
-// return ret;
-//}
 crow::json::wvalue Database::getParameters() {
     std::lock_guard<std::mutex> lock(_m);
     SQLite::Statement q(_db, "SELECT json FROM parameters WHERE id='0';");
@@ -158,4 +151,20 @@ PIRegulator::parameters_t Database::getRegulatorParameters() {
     ret.min_istate = std::stod(crow::json::dump(p["regulator"]["min_istate"]));
 
     return ret;
+}
+
+void Database::syncRecipe(Recipe& r) {
+}
+
+Recipe Database::getRecipe(const std::string name) {
+    std::lock_guard<std::mutex> lock(_m);
+    SQLite::Statement q(_db, "SELECT UNIQUE recipe FROM recipes WHERE name=?;");
+    q.bind(1, name);
+
+    if (!q.executeStep()) throw NoSuchRecipe();
+
+    auto jr = crow::json::load(q.getColumn(0).getString());
+
+
+    return Recipe();
 }

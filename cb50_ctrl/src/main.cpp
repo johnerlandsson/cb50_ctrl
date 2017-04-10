@@ -29,8 +29,8 @@
 #include "PIRegulator.h"
 #include "ProcessData.h"
 #include "ProcessValue.h"
-#include "TrendData.h"
 #include "Recipe.h"
+#include "TrendData.h"
 
 #define MACHINE_CYCLE_TIME_MS 100
 #define PI_CYCLE_TIME_MS 10000
@@ -134,13 +134,7 @@ void machine_cycle() {
     }
 }
 
-int main(void) {
-    crow::logger::setHandler(&g_db);
-
-    crow::SimpleApp app;
-    crow::mustache::set_base(WWW_PREFIX);
-    thread machine_thread(machine_cycle);
-
+inline void setup_routing(crow::SimpleApp& app) {
     // Static routing of assets
     CROW_ROUTE(app, "/assets/<str>/<str>")
     ([](string folder, string file) {
@@ -164,8 +158,9 @@ int main(void) {
 
                 return crow::response(g_process_data.toWvalue());
             } catch (const exception& e) {
-                CROW_LOG_WARNING << "Caught exception when receiving process data. "
-                                 << e.what();
+                CROW_LOG_WARNING
+                    << "Caught exception when receiving process data. "
+                    << e.what();
                 return crow::response(417);
             }
             return crow::response(500);
@@ -214,6 +209,16 @@ int main(void) {
         // return crow::response(crow::mustache::load("index.html").render());
         return file2response(string(WWW_PREFIX) + "index.html");
     });
+}
+
+int main(void) {
+    crow::logger::setHandler(&g_db);
+
+    crow::SimpleApp app;
+    crow::mustache::set_base(WWW_PREFIX);
+    setup_routing(app);
+
+    thread machine_thread(machine_cycle);
 
     CROW_LOG_INFO << "Application started";
 

@@ -7,8 +7,9 @@ Recipe::Recipe(std::string name, std::vector<Recipe::recipe_entry_t> entries)
 
 Recipe::~Recipe() {}
 
-void Recipe::fromWvalue(crow::json::wvalue r) {
-    _entries.clear();
+Recipe Recipe::fromWvalue(crow::json::wvalue r) {
+    Recipe ret;
+    ret._entries.clear();
 
     int i = 0;
     while (r[i].count("name") > 0) {
@@ -18,9 +19,11 @@ void Recipe::fromWvalue(crow::json::wvalue r) {
             std::chrono::minutes(std::stoi(crow::json::dump(r[i]["duration"])));
         et.sv = std::stod(crow::json::dump(r[i]["sv"]));
 
-        _entries.push_back(et);
+        ret._entries.push_back(et);
         ++i;
     }
+
+    return ret;
 }
 
 crow::json::wvalue Recipe::toWvalue() const {

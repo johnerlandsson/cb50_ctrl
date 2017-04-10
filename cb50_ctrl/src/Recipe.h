@@ -18,7 +18,7 @@ class Recipe {
     Recipe(std::string name, std::vector<recipe_entry_t> entries);
     virtual ~Recipe();
 
-    void fromWvalue(crow::json::wvalue r);
+    static Recipe fromWvalue(crow::json::wvalue r);
     crow::json::wvalue toWvalue() const;
 
    private:
