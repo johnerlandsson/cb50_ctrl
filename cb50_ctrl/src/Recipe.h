@@ -9,16 +9,16 @@
 class Recipe {
    public:
     typedef struct {
-        std::string name;
         std::chrono::minutes dur;
         float sv;
+        bool confirm;
     } recipe_entry_t;
 
     Recipe();
     Recipe(std::string name, std::vector<recipe_entry_t> entries);
     virtual ~Recipe();
 
-    static Recipe fromWvalue(crow::json::wvalue r);
+    static Recipe fromWvalue(crow::json::wvalue& r);
     crow::json::wvalue toWvalue() const;
 
    private:

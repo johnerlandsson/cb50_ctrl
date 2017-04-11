@@ -135,6 +135,31 @@ void machine_cycle() {
 }
 
 inline void setup_routing(crow::SimpleApp& app) {
+    // Send recipe names
+    CROW_ROUTE(app, "/get_recipe_names")
+    ([]() {
+        cout << "Here" << endl;
+        auto names = g_db.getRecipeNames();
+        crow::json::wvalue ret;
+        int i = 0;
+        for (auto n : names) {
+            ret[i] = n;
+            ++i;
+        }
+        return crow::response(ret);
+    });
+
+    // Send specific recipe
+    CROW_ROUTE(app, "/get_recipe/<str>")
+    ([](string name) {
+        try {
+            auto r = g_db.getRecipe(name).toWvalue();
+            return crow::response(r);
+        } catch (NoSuchRecipe&) {
+            return crow::response(404);
+        }
+    });
+
     // Static routing of assets
     CROW_ROUTE(app, "/assets/<str>/<str>")
     ([](string folder, string file) {

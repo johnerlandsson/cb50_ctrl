@@ -59,7 +59,7 @@ Database::Database()
         "'name' TEXT NOT NULL);");
     _db.exec(
         "INSERT OR IGNORE INTO 'main'.'recipes' (id, recipe, name)"
-        "VALUES (0, '{[{\"sv\": 65, \"time\": 60, \"confirm\": false},"
+        "VALUES (0, '[{\"sv\": 65, \"time\": 60, \"confirm\": false},"
         "{\"sv\": 76, \"time\": 10, \"confirm\": true},"
         "{\"sv\": 101, \"time\": 90, \"confirm\": false}]', 'default');");
 }
@@ -153,18 +153,28 @@ PIRegulator::parameters_t Database::getRegulatorParameters() {
     return ret;
 }
 
-void Database::syncRecipe(Recipe& r) {
-}
+void Database::syncRecipe(Recipe& r) { std::lock_guard<std::mutex> lock(_m); }
 
 Recipe Database::getRecipe(const std::string name) {
     std::lock_guard<std::mutex> lock(_m);
-    SQLite::Statement q(_db, "SELECT UNIQUE recipe FROM recipes WHERE name=?;");
+    SQLite::Statement q(_db,
+                        "SELECT DISTINCT recipe FROM recipes WHERE name=?;");
     q.bind(1, name);
 
     if (!q.executeStep()) throw NoSuchRecipe();
 
-    auto jr = crow::json::load(q.getColumn(0).getString());
+    crow::json::wvalue jr;  // = crow::json::load(q.getColumn(0).getString());
+    jr["name"] = name;
+    jr["entries"] = crow::json::load(q.getColumn(0).getString());
 
+    return Recipe::fromWvalue(jr);
+}
 
-    return Recipe();
+std::vector<std::string> Database::getRecipeNames() {
+    std::vector<std::string> ret;
+    std::lock_guard<std::mutex> lock(_m);
+    SQLite::Statement q(_db, "SELECT name FROM recipes;");
+    while (q.executeStep()) ret.push_back(q.getColumn(0).getString());
+
+    return ret;
 }

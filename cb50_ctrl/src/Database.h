@@ -53,6 +53,7 @@ class Database : public crow::ILogHandler {
     PIRegulator::parameters_t getRegulatorParameters();
     void syncRecipe(Recipe& r);
     Recipe getRecipe(const std::string name);
+    std::vector<std::string> getRecipeNames();
 
    private:
     void insert_log(const std::string msg, const int type_id);
