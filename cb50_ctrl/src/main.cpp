@@ -138,14 +138,11 @@ inline void setup_routing(crow::SimpleApp& app) {
     // Send recipe names
     CROW_ROUTE(app, "/get_recipe_names")
     ([]() {
-        cout << "Here" << endl;
         auto names = g_db.getRecipeNames();
         crow::json::wvalue ret;
         int i = 0;
-        for (auto n : names) {
-            ret[i] = n;
-            ++i;
-        }
+        for (auto n : names) ret[i++] = n;
+
         return crow::response(ret);
     });
 
