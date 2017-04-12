@@ -20,6 +20,35 @@ angular.module("RecipeApp", ['ui-notification']).controller("RecipeCtrl", functi
   $scope.pd = {};
   $scope.recipeBrowserVisible = false;
   $scope.recipeViewerVisible = false;
+  $scope.recipe_names = [];
+  $scope.current_recipe = {};
+
+	// Is called after successful get_recipe()
+	function current_recipe_updated() {
+		console.log($scope.current_recipe);
+	}
+
+  function get_recipe(name) {
+    $http.get("get_recipe/" + name).then(function successCallback(response) {
+			$scope.current_recipe = response.data;
+			current_recipe_updated();
+    }, function errorCallback(response) {
+      Notification.error({
+        message: "Failed to receive recipe: " + name + " from server."
+      });
+    });
+  }
+
+  // Fetch array of recipe names from server
+  function get_recipe_names() {
+    $http.get("get_recipe_names").then(function successCallback(response) {
+      $scope.recipe_names = response.data;
+    }, function errorCallback(response) {
+      Notification.error({
+        message: "Failed to receive recipe names from server."
+      });
+    });
+  }
 
   // Fetch process data from server
   function get_pd() {
@@ -76,13 +105,12 @@ angular.module("RecipeApp", ['ui-notification']).controller("RecipeCtrl", functi
     // Set button colors
     set_pump_button_bg();
     set_mixer_button_bg();
-		set_run_button_bg();
+    set_run_button_bg();
 
     $scope.recipeViewerVisible = $scope.pd["run_recipe"];
     $scope.recipeBrowserVisible = !$scope.recipeViewerVisible;
   }
 
-  $scope.intervalID = window.setInterval(update_pd, 500);
 
   // Pump button clicked
   $scope.pump_btn_clicked = function() {
@@ -107,7 +135,7 @@ angular.module("RecipeApp", ['ui-notification']).controller("RecipeCtrl", functi
     $scope.pd["run_recipe"] = !$scope.pd["run_recipe"];
     $scope.recipeViewerVisible = $scope.pd["run_recipe"];
     $scope.recipeBrowserVisible = !$scope.recipeViewerVisible;
-		set_run_button_bg();
+    set_run_button_bg();
     $http.post('put_pd', {
       message: $scope.pd
     }).then(function successCallback(response) {
@@ -124,7 +152,7 @@ angular.module("RecipeApp", ['ui-notification']).controller("RecipeCtrl", functi
   $scope.mixer_btn_clicked = function() {
     window.clearInterval($scope.intervalID);
     $scope.pd["mixer"] = !$scope.pd["mixer"];
-		set_mixer_button_bg();
+    set_mixer_button_bg();
     $http.post('put_pd', {
       message: $scope.pd
     }).then(function successCallback(response) {
@@ -136,6 +164,22 @@ angular.module("RecipeApp", ['ui-notification']).controller("RecipeCtrl", functi
       });
     });
   }
+
+
+
+  $scope.intervalID = window.setInterval(update_pd, 500);
+
+  window.onload = function() {
+    $http.get("get_recipe_names").then(function successCallback(response) {
+      $scope.recipe_names = response.data;
+			get_recipe($scope.recipe_names[0]);
+    }, function errorCallback(response) {
+      Notification.error({
+        message: "Failed to receive recipe names from server."
+      });
+    });
+  }
+
 }).config(function(NotificationProvider) { //Configure notifications
   NotificationProvider.setOptions({
     delay: 10000,
