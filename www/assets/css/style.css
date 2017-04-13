@@ -164,3 +164,50 @@ body {
 	margin-right: 10px;
 	color: darkred;
 }
+.input-group {
+	width: 100%;
+}
+
+.entry-edit-label {
+	/*margin-left: 0;*/
+	margin-right: 0;
+	padding-right: 0;
+	vertical-align: center;
+	max-width: 50px;
+}
+
+.entry-edit {
+	margin-left: 0;
+	margin-right: 0;
+	padding-left: 0;
+	padding-right: 0;
+}
+
+.entry-edit .input-group-addon {
+	text-align: left;
+	width: auto;
+}
+
+.entry-edit-label .input-group-addon {
+	text-align: right;
+	width: auto;
+}
+
+.confirm-button {
+	color: green;
+}
+
+.cancel-button {
+	color: red;
+}
+
+/*.input-group-addon*/
+/*{*/
+	/*background-color:#FFF;*/
+/*}*/
+
+/*.input-group .input-group-addon + .form-control*/
+/*{*/
+	/*border:none;*/
+	/*height: 100%;*/
+/*}*/

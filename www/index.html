@@ -75,12 +75,68 @@
 		    <option ng-repeat="n in recipe_names">{{ n }}</option>
 		    </select>
                     </div>
-                    <div class="col-xs-6">
-                        <!--<label for="recipe_entries">Steps</label>-->
-                        <select multiple class="form-control" id="recipe_entries">
-				<option ng-repeat="e in current_recipe['entries']">
-				Set value: {{ e['sv'] }}&deg; Duration: {{ e['time'] }}min {{ e['confirm'] }}</option>
-			    </select>
+                    <div class="col-xs-6" ng-show="!editRecipeEntryVisible">
+                        <div class="list-group">
+                            <a href="#" class="list-group-item" ng-repeat="(i, e) in current_recipe['entries']"
+                                ng-click="edit_recipe(i)">
+                                <i class="fa fa-thermometer-quarter" aria-hidden="true"></i>                                {{ e['sv'] }}&deg;
+                                <i class="fa fa-clock-o" aria-hidden="true"></i>                                {{ e['time'] }}min
+                                <i class="{{ e['confirm'] ? 'fa fa-hand-paper-o' : 'fa fa-caret-square-o-down' }}"
+                                    aria-hidden="true"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-xs-6" ng-show="editRecipeEntryVisible">
+                        <div class="container">
+                            <div class="form-row">
+                                <div class="input-group">
+                                    <div class="col-xs-1 entry-edit-label">
+                                        <label for="editSv"><i class="fa fa-thermometer-quarter fa-2x" aria-hidden="true"></i></label>
+                                    </div>
+                                    <div class="col-xs-1 entry-edit">
+                                        <input class="form-control" type="number" id="editSv" ng-model="entryToBeEdited['sv']">
+                                    </div>
+                                    <div class="col-xs-1 entry-edit">
+                                        <span class="input-group-addon">&deg;</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="input-group">
+                                    <div class="col-xs-1 entry-edit-label">
+                                        <label for="editTime"><i class="fa fa-clock-o fa-2x" aria-hidden="true"></i></label>
+                                    </div>
+                                    <div class="col-xs-1 entry-edit">
+                                        <input class="form-control" type="number" id="editTime" ng-model="entryToBeEdited['time']">
+                                    </div>
+                                    <div class="col-xs-1 entry-edit">
+                                        <span class="input-group-addon">min</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="input-group">
+                                    <div class="col-xs-1 entry-edit-label">
+                                        <label for="editConfirm"><i class="fa fa-hand-paper-o fa-2x" aria-hidden="true"></i></label>
+                                    </div>
+                                    <div class="col-xs-1 entry-edit">
+                                        <input type="checkbox" id="editConfirm" ng-model="entryToBeEdited['confirm']">
+                                    </div>
+                                    <div class="col-xs-1 entry-edit">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-xs-1">
+				</div>
+                                <div class="col-xs-1">
+                                    <a href="#" ng-click="editingFinished()"><i class="fa fa-check fa-3x confirm-button" aria-hidden="true"></i></a>
+                                </div>
+                                <div class="col-xs-1">
+                                    <a href="#" ng-click="cancelEditing()"><i class="fa fa-remove fa-3x cancel-button" aria-hidden="true"></i></a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

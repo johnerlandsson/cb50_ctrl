@@ -22,16 +22,49 @@ angular.module("RecipeApp", ['ui-notification']).controller("RecipeCtrl", functi
   $scope.recipeViewerVisible = false;
   $scope.recipe_names = [];
   $scope.current_recipe = {};
+  $scope.editRecipeEntryVisible = false;
+  $scope.entryToBeEdited = {};
+  $scope.entryToBeEditedIndex = 0;
 
-	// Is called after successful get_recipe()
-	function current_recipe_updated() {
-		console.log($scope.current_recipe);
+	function syncRecipe() {
+    $http.post('sync_recipe', {
+      message: $scope.current_recipe
+    }).then(function successCallback(response) {
+      Notification.success({
+        message: "Successfully synced recipe"
+      });
+			$scope.editRecipeEntryVisible = false;
+    }, function errorCallback(response) {
+      Notification.error({
+				message: "Failed to sync recipe: " + response.body
+      });
+    });
 	}
+
+  $scope.cancelEditing = function() {
+    $scope.editRecipeEntryVisible = false;
+  }
+
+  $scope.editingFinished = function() {
+    $scope.current_recipe['entries'][$scope.entryToBeEditedIndex] = $scope.entryToBeEdited;
+		syncRecipe();
+  }
+
+  $scope.edit_recipe = function(index) {
+    $scope.entryToBeEditedIndex = index;
+    $scope.entryToBeEdited = $scope.current_recipe['entries'][index];
+    $scope.editRecipeEntryVisible = true;
+  }
+
+  // Is called after successful get_recipe()
+  function current_recipe_updated() {
+    $scope.entryToBeEdited = $scope.current_recipe['entries'][0];
+  }
 
   function get_recipe(name) {
     $http.get("get_recipe/" + name).then(function successCallback(response) {
-			$scope.current_recipe = response.data;
-			current_recipe_updated();
+      $scope.current_recipe = response.data;
+      current_recipe_updated();
     }, function errorCallback(response) {
       Notification.error({
         message: "Failed to receive recipe: " + name + " from server."
@@ -172,7 +205,7 @@ angular.module("RecipeApp", ['ui-notification']).controller("RecipeCtrl", functi
   window.onload = function() {
     $http.get("get_recipe_names").then(function successCallback(response) {
       $scope.recipe_names = response.data;
-			get_recipe($scope.recipe_names[0]);
+      get_recipe($scope.recipe_names[0]);
     }, function errorCallback(response) {
       Notification.error({
         message: "Failed to receive recipe names from server."
