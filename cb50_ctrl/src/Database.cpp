@@ -153,7 +153,17 @@ PIRegulator::parameters_t Database::getRegulatorParameters() {
     return ret;
 }
 
-void Database::syncRecipe(Recipe& r) { std::lock_guard<std::mutex> lock(_m); }
+void Database::syncRecipe(Recipe r) {
+    std::lock_guard<std::mutex> lock(_m);
+    SQLite::Statement q(_db,
+                        "SELECT DISTINCT id FROM recipes WHERE name=?;");
+    q.bind(1, r.getName());
+
+    if (!q.executeStep())
+        add_recipe(r.getName(), r.entries2Str());
+    else
+        update_recipe(q.getColumn(0).getInt(), r.getName(), r.entries2Str());
+}
 
 Recipe Database::getRecipe(const std::string name) {
     std::lock_guard<std::mutex> lock(_m);
@@ -177,4 +187,20 @@ std::vector<std::string> Database::getRecipeNames() {
     while (q.executeStep()) ret.push_back(q.getColumn(0).getString());
 
     return ret;
+}
+
+void Database::add_recipe(const std::string name, const std::string entries) {
+    SQLite::Statement q(_db, "INSERT INTO recipes (name, recipe) VALUES(?, ?);");
+    q.bind(1, name);
+    q.bind(2, entries);
+    if(!q.exec()) throw AddRecipeError();
+}
+
+void Database::update_recipe(const int id, const std::string name,
+                             const std::string entries) {
+    SQLite::Statement q(_db, "UPDATE recipes SET name=?, recipe=? WHERE id=?;");
+    q.bind(1, name);
+    q.bind(2, entries);
+    q.bind(3, id);
+    if(!q.exec()) throw UpdateRecipeError();
 }

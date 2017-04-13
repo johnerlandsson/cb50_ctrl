@@ -34,6 +34,18 @@ class NoSuchRecipe : public std::exception {
     }
 };
 
+class AddRecipeError : public std::exception {
+    virtual const char* what() const throw() {
+        return "Error when adding recipe to database.";
+    }
+};
+
+class UpdateRecipeError : public std::exception {
+    virtual const char* what() const throw() {
+        return "Error when updating recipe in database.";
+    }
+};
+
 class Database : public crow::ILogHandler {
     enum LogTypes { Info = 0, Error = 1, Warning = 2, Debug = 3 };
 
@@ -51,12 +63,14 @@ class Database : public crow::ILogHandler {
     crow::json::wvalue getParameters();
     void updateParameters(const crow::json::wvalue p);
     PIRegulator::parameters_t getRegulatorParameters();
-    void syncRecipe(Recipe& r);
+    void syncRecipe(Recipe r);
     Recipe getRecipe(const std::string name);
     std::vector<std::string> getRecipeNames();
 
    private:
     void insert_log(const std::string msg, const int type_id);
+    void add_recipe(const std::string name, const std::string entries);
+    void update_recipe(const int id, const std::string name, const std::string entries);
     SQLite::Database _db;
     std::mutex _m;
 };

@@ -38,6 +38,8 @@ class Recipe {
 
     static Recipe fromWvalue(crow::json::wvalue& r);
     crow::json::wvalue toWvalue() const;
+    std::string getName() const;
+    std::string entries2Str() const;
 
    private:
     std::string _name;

@@ -60,3 +60,20 @@ crow::json::wvalue Recipe::toWvalue() const {
 
     return ret;
 }
+
+std::string Recipe::getName() const {
+    return _name;
+}
+
+std::string Recipe::entries2Str() const {
+    crow::json::wvalue ret;
+    int i = 0;
+    for(auto e : _entries) {
+        ret[i]["sv"] = e.sv;
+        ret[i]["time"] = e.dur.count();
+        ret[i]["confirm"] = e.confirm;
+        i++;
+    }
+
+    return crow::json::dump(ret);
+}

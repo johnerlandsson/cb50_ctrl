@@ -157,6 +157,27 @@ inline void setup_routing(crow::SimpleApp& app) {
         }
     });
 
+    // Receive recipe to be added or updated
+    CROW_ROUTE(app, "/sync_recipe")
+        .methods("GET"_method, "POST"_method)([](const crow::request& req) {
+            crow::response ret;
+            try {
+                crow::json::wvalue c = crow::json::load(req.body)["message"];
+                g_db.syncRecipe(Recipe::fromWvalue(c));
+                ret.body = "ok";
+                ret.code = 200;
+                CROW_LOG_INFO << "Synced recipe: "
+                              << crow::json::dump(c["name"]);
+            } catch (const exception& e) {
+                ret.body = e.what();
+                ret.code = 500;
+                CROW_LOG_ERROR << "Failed to sync recipe: " << req.body
+                               << " Message: " << e.what();
+            }
+
+            return ret;
+        });
+
     // Static routing of assets
     CROW_ROUTE(app, "/assets/<str>/<str>")
     ([](string folder, string file) {
