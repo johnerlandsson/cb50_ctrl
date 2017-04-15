@@ -173,7 +173,7 @@ Recipe Database::getRecipe(const std::string name) {
 
     if (!q.executeStep()) throw NoSuchRecipe();
 
-    crow::json::wvalue jr;  // = crow::json::load(q.getColumn(0).getString());
+    crow::json::wvalue jr; 
     jr["name"] = name;
     jr["entries"] = crow::json::load(q.getColumn(0).getString());
 

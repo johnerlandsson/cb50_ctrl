@@ -151,6 +151,7 @@ inline void setup_routing(crow::SimpleApp& app) {
     ([](string name) {
         try {
             auto r = g_db.getRecipe(name).toWvalue();
+            //cout << crow::json::dump(r) << endl;
             return crow::response(r);
         } catch (NoSuchRecipe&) {
             return crow::response(404);

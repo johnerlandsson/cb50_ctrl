@@ -29,6 +29,10 @@ Recipe Recipe::fromWvalue(crow::json::wvalue& r) {
     Recipe ret;
     ret._entries.clear();
     ret._name = crow::json::dump(r["name"]);
+    if(*ret._name.begin() == '"' && *(ret._name.end() - 1) == '"') {
+        ret._name.erase(ret._name.begin());
+        ret._name.erase(ret._name.end() - 1);
+    }
 
     int i = 0;
     while (crow::json::dump(r["entries"][i]["sv"]) != "null") {
