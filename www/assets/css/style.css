@@ -201,6 +201,45 @@ body {
 	color: red;
 }
 
+.recipe-container {
+	max-width: 500px;
+	width: 100%;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.select-recipe-row {
+	/*width: 500px;*/
+	/*max-width: 500px;*/
+	margin-left: auto;
+	margin-right: auto;
+	/*padding-left: 100px;*/
+}
+
+#browse-recipe-entries {
+	margin-top: 20px;
+	width: 100%;
+	font-size: 14pt;
+}
+
+#browse-recipe-entries i {
+	margin-right: 10px;
+}
+
+#browse-recipe-entries td {
+	padding-right: 20px;
+	padding-left: 10px;
+
+}
+
+/*#browser-row {*/
+	/*width: 100%;*/
+/*}*/
+
+/*#browse-recipe-entries {*/
+	/*width: 100%;*/
+/*}*/
+
 /*.input-group-addon*/
 /*{*/
 	/*background-color:#FFF;*/

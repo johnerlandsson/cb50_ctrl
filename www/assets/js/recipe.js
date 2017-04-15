@@ -25,6 +25,11 @@ angular.module("RecipeApp", ['ui-notification']).controller("RecipeCtrl", functi
   $scope.editRecipeEntryVisible = false;
   $scope.entryToBeEdited = {};
   $scope.entryToBeEditedIndex = 0;
+	$scope.selectedRecipeName = '';
+
+	$scope.selectedRecipeChanged = function() {
+		console.log($scope.selectedRecipeName);
+	}
 
 	function syncRecipe() {
     $http.post('sync_recipe', {
@@ -50,7 +55,7 @@ angular.module("RecipeApp", ['ui-notification']).controller("RecipeCtrl", functi
 		syncRecipe();
   }
 
-  $scope.edit_recipe = function(index) {
+  $scope.edit_recipe_entry = function(index) {
     $scope.entryToBeEditedIndex = index;
     $scope.entryToBeEdited = $scope.current_recipe['entries'][index];
     $scope.editRecipeEntryVisible = true;
@@ -58,6 +63,8 @@ angular.module("RecipeApp", ['ui-notification']).controller("RecipeCtrl", functi
 
   // Is called after successful get_recipe()
   function current_recipe_updated() {
+		//console.log($scope.current_recipe['name']);
+		$scope.selectedRecipeName = $scope.current_recipe['name'];
     $scope.entryToBeEdited = $scope.current_recipe['entries'][0];
   }
 
@@ -87,7 +94,6 @@ angular.module("RecipeApp", ['ui-notification']).controller("RecipeCtrl", functi
   function get_pd() {
     $http.get("get_pd").then(function successCallback(response) {
       $scope.pd = response.data;
-      //console.log($scope.pd);
     }, function errorCallback(response) {
       Notification.error({
         message: "Failed to receive process data from server."
@@ -197,8 +203,6 @@ angular.module("RecipeApp", ['ui-notification']).controller("RecipeCtrl", functi
       });
     });
   }
-
-
 
   $scope.intervalID = window.setInterval(update_pd, 500);
 
