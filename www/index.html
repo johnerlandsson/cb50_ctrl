@@ -69,12 +69,13 @@
             <div class="container recipe-container">
                 <div class="row select-recipe-row">
                     <div class="col-xs-4">
-                        <select class="form-control" id="select-recipe-list" ng-model="selectedRecipeName"
-                            ng-change="selectedRecipeChanged()" ng-disabled="addingNewRecipe">
-				<option ng-repeat="n in recipe_names">
-				{{ n }}
-				</option>
-			</select>
+                        <!--<select class="form-control" id="select-recipe-list" ng-change="selectedRecipeChanged()" ng-disabled="addingNewRecipe" ng-model="recipe_names">-->
+                        <!--<option ng-repeat="n in recipe_names" ng-value="selectedRecipeName">-->
+                        <!--{{ n }}-->
+                        <!--</option>-->
+                        <!--</select>-->
+                        <select class="form-control" name="recipeNames" id="recipeNames" ng-options="recipe.name for recipe in recipes track by recipe.id"
+                            ng-model="selectedRecipeOption" ng-change="selectedRecipeChanged()"></select>
                     </div>
                     <div class="col-xs-4">
                         <div class="btn-group">
@@ -88,25 +89,27 @@
                     </div>
                 </div>
                 <div class="row adding-new-recipe-row" ng-show="addingNewRecipe">
-			<div class="col-xs-6">
-				<input type="text" id="inpNewRecipeName" ng-model="newRecipeName"></input>
-			</div>
-			<div class="col-xs-5">
-				<div class="btn-group">
-					<button type="button" class="btn btn-primary" ng-click="confirmAddNewRecipe()">
+                    <div class="col-xs-6">
+                        <input type="text" id="inpNewRecipeName" ng-model="newRecipeName"></input>
+                    </div>
+                    <div class="col-xs-5">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-primary" ng-click="confirmAddNewRecipe()">
 					    <i class="fa fa-check fa-2x" aria-hidden="true"></i>
 					</button>
-					<button type="button" class="btn btn-primary" ng-click="cancelAddNewRecipe()">
+                            <button type="button" class="btn btn-primary" ng-click="cancelAddNewRecipe()">
 					    <i class="fa fa-remove fa-2x" aria-hidden="true"></i>
 					</button>
-				</div>
-			</div>
+                        </div>
+                    </div>
                 </div>
                 <div class="row" ng-show="!editRecipeEntryVisible">
                     <table class="table-hover" id="browse-recipe-entries">
                         <tr ng-repeat="(i, e) in current_recipe['entries']">
-                            <td><i class="fa fa-thermometer-quarter" aria-hidden="true"></i>{{ e['sv'] }}&deg;</td>
-                            <td><i class="fa fa-clock-o" aria-hidden="true"></i>{{ e['time'] }}min</td>
+                            <td><i class="fa fa-thermometer-quarter" aria-hidden="true"></i>{{
+                                e['sv'] }}&deg;</td>
+                            <td><i class="fa fa-clock-o" aria-hidden="true"></i>{{
+                                e['time'] }}min</td>
                             <td><i class="{{ e['confirm'] ? 'fa fa-hand-paper-o' : 'fa fa-caret-square-o-down' }}"
                                     aria-hidden="true"></i></td>
                             <td></td>
@@ -118,9 +121,9 @@
                                     <button type="button" class="btn btn-primary" ng-click="lower_entry(i)" ng-disabled="addingNewRecipe">
 					    <i class="fa fa-arrow-circle-o-down" aria-hidden="true"></i>
 				    </button>
-				</div>
-			    </td>
-			    <td>
+                                </div>
+                            </td>
+                            <td>
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-primary" ng-click="edit_recipe_entry(i)" ng-disabled="addingNewRecipe">
 					    <i class="fa fa-pencil-square-o" aria-hidden="true"></i>

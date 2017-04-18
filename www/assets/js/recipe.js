@@ -20,68 +20,81 @@ angular.module("RecipeApp", ['ui-notification']).controller("RecipeCtrl", functi
   $scope.pd = {};
   $scope.recipeBrowserVisible = false;
   $scope.recipeViewerVisible = false;
-  $scope.recipe_names = [];
   $scope.current_recipe = {};
   $scope.editRecipeEntryVisible = false;
   $scope.entryToBeEdited = {};
   $scope.entryToBeEditedIndex = 0;
-  $scope.selectedRecipeName = '';
-	$scope.addingNewRecipe = false;
-	$scope.newRecipeName = "";
+  $scope.addingNewRecipe = false;
+  $scope.newRecipeName = "";
+  $scope.recipes = [];
+  $scope.selectedRecipeOption = {};
 
-	$scope.confirmAddNewRecipe = function() {
-		console.log("here");
-		if($scope.newRecipeName.length <= 0) {
+  $scope.confirmAddNewRecipe = function() {
+    if ($scope.newRecipeName.length <= 0) {
       Notification.error({
-				message: "Error: Can't add recipe without name"
+        message: "Error: Can't add recipe without name"
       });
-			return;
-		}
+      return;
+    }
 
-		$scope.recipe_names.push($scope.newRecipeName);
-		$scope.selectedRecipeName = $scope.newRecipeName;
-		$scope.current_recipe = {name: $scope.newRecipeName, entries: [{sv: 100.0, time: 60, confirm: false}]};
-		$scope.addingNewRecipe = false;
-	}
+    $scope.recipes.push({
+      id: $scope.recipes[$scope.recipes.length - 1]['id'] + 1,
+      name: $scope.newRecipeName
+    });
 
-	$scope.cancelAddNewRecipe = function() {
-		$scope.newRecipeName = "";
-		$scope.addingNewRecipe = false;
-	}
+    $scope.current_recipe = {
+      name: $scope.newRecipeName,
+      entries: [{
+        sv: 100.0,
+        time: 60,
+        confirm: false
+      }]
+    };
 
-
-	$scope.raise_entry = function(index) {
-		if(index <= 0) return;
-		var tmp = $scope.current_recipe['entries'][index];
-		$scope.current_recipe['entries'][index] = $scope.current_recipe['entries'][index - 1];
-		$scope.current_recipe['entries'][index - 1] = tmp;
+		$scope.selectedRecipeOption = $scope.recipes[$scope.recipes.length - 1];
+    $scope.addingNewRecipe = false;
 		syncRecipe();
-	}
+  }
 
-	$scope.lower_entry = function(index) {
-		if(index >= $scope.current_recipe['entries'].length - 1) return;
-		var tmp = $scope.current_recipe['entries'][index];
-		$scope.current_recipe['entries'][index] = $scope.current_recipe['entries'][index + 1];
-		$scope.current_recipe['entries'][index + 1] = tmp;
-		syncRecipe();
-	}
+  $scope.cancelAddNewRecipe = function() {
+    $scope.newRecipeName = "";
+    $scope.addingNewRecipe = false;
+  }
+
+
+  $scope.raise_entry = function(index) {
+    if (index <= 0) return;
+    var tmp = $scope.current_recipe['entries'][index];
+    $scope.current_recipe['entries'][index] = $scope.current_recipe['entries'][index - 1];
+    $scope.current_recipe['entries'][index - 1] = tmp;
+    syncRecipe();
+  }
+
+  $scope.lower_entry = function(index) {
+    if (index >= $scope.current_recipe['entries'].length - 1) return;
+    var tmp = $scope.current_recipe['entries'][index];
+    $scope.current_recipe['entries'][index] = $scope.current_recipe['entries'][index + 1];
+    $scope.current_recipe['entries'][index + 1] = tmp;
+    syncRecipe();
+  }
 
   $scope.remove_recipe_entry = function(index) {
     $scope.entryToBeEditedIndex = 0;
 
-		if($scope.current_recipe['entries'].length <= 1) {
+    if ($scope.current_recipe['entries'].length <= 1) {
       Notification.error({
-				message: "Error: Recipe needs at least one entry"
+        message: "Error: Recipe needs at least one entry"
       });
-			return;
-		}
+      return;
+    }
 
     if (index >= 0) $scope.current_recipe['entries'].splice(index, 1);
-		syncRecipe();
+    syncRecipe();
   }
 
+  // Callback for add recipe button in browser
   $scope.addRecipe = function() {
-		$scope.addingNewRecipe = true;
+    $scope.addingNewRecipe = true;
   }
 
   $scope.removeRecipe = function() {
@@ -89,7 +102,7 @@ angular.module("RecipeApp", ['ui-notification']).controller("RecipeCtrl", functi
   }
 
   $scope.selectedRecipeChanged = function() {
-    console.log($scope.selectedRecipeName);
+		get_recipe($scope.selectedRecipeOption['name']);
   }
 
   function syncRecipe() {
@@ -125,7 +138,7 @@ angular.module("RecipeApp", ['ui-notification']).controller("RecipeCtrl", functi
   // Is called after successful get_recipe()
   function current_recipe_updated() {
     //console.log($scope.current_recipe['name']);
-    $scope.selectedRecipeName = $scope.current_recipe['name'];
+    //$scope.selectedRecipeName = $scope.current_recipe['name'];
     $scope.entryToBeEdited = $scope.current_recipe['entries'][0];
   }
 
@@ -136,17 +149,6 @@ angular.module("RecipeApp", ['ui-notification']).controller("RecipeCtrl", functi
     }, function errorCallback(response) {
       Notification.error({
         message: "Failed to receive recipe: " + name + " from server."
-      });
-    });
-  }
-
-  // Fetch array of recipe names from server
-  function get_recipe_names() {
-    $http.get("get_recipe_names").then(function successCallback(response) {
-      $scope.recipe_names = response.data;
-    }, function errorCallback(response) {
-      Notification.error({
-        message: "Failed to receive recipe names from server."
       });
     });
   }
@@ -269,8 +271,12 @@ angular.module("RecipeApp", ['ui-notification']).controller("RecipeCtrl", functi
 
   window.onload = function() {
     $http.get("get_recipe_names").then(function successCallback(response) {
-      $scope.recipe_names = response.data;
-      get_recipe($scope.recipe_names[0]);
+      for (i = 0; i < response.data.length; i++) $scope.recipes.push({
+        id: i,
+        name: response.data[i]
+      });
+			$scope.selectedRecipeOption = $scope.recipes[0];
+      get_recipe($scope.recipes[0]['name']);
     }, function errorCallback(response) {
       Notification.error({
         message: "Failed to receive recipe names from server."
