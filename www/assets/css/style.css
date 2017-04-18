@@ -241,21 +241,32 @@ body {
 	vertical-align: bottom;
 }
 
-/*#browser-row {*/
-	/*width: 100%;*/
+.entry-list-btn-group button {
+	margin: 0;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	padding-left: 4px;
+	padding-right: 4px;
+	background: none;
+	border: 1px solid grey;
+	color: black;
+}
+
+.entry-list-btn-group button:hover {
+	background: lightgrey;
+	color: black;
+}
+
+.entry-list-btn-group button:active:focus {
+	background: darkgrey;
+	color: white;
+}
+
+/*.entry-list-btn-group button:focus {*/
+	/*background: darkgrey;*/
+	/*color: white;*/
 /*}*/
 
-/*#browse-recipe-entries {*/
-	/*width: 100%;*/
-/*}*/
-
-/*.input-group-addon*/
-/*{*/
-	/*background-color:#FFF;*/
-/*}*/
-
-/*.input-group .input-group-addon + .form-control*/
-/*{*/
-	/*border:none;*/
-	/*height: 100%;*/
-/*}*/
+#recipeBrowserEntries {
+	margin-top: 20px;
+}

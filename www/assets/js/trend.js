@@ -16,7 +16,6 @@
 */
 
 angular.module("TrendApp", ["chart.js"]).controller("TrendCtrl", function($scope, $http) {
-
   $scope.labels = [];
   $scope.series = ['Set value', 'Process value', 'Output'];
   $scope.data = [[], [], []];

@@ -16,19 +16,27 @@
  */
 
 //The module
-angular.module("RecipeApp", ['ui-notification']).controller("RecipeCtrl", function($scope, $http, Notification) {
+var recipeModule = angular.module("RecipeApp", ['ui-notification']);
+recipeModule.controller("RecipeCtrl", function($scope, $http, Notification) {
   $scope.pd = {};
   $scope.recipeBrowserVisible = false;
   $scope.recipeViewerVisible = false;
   $scope.current_recipe = {};
   $scope.editRecipeEntryVisible = false;
   $scope.entryToBeEdited = {};
-  $scope.entryToBeEditedIndex = 0;
   $scope.addingNewRecipe = false;
   $scope.newRecipeName = "";
   $scope.recipes = [];
   $scope.selectedRecipeOption = {};
 
+	$scope.add_entry = function() {
+		$scope.current_recipe['entries'].push({sv: 100, time: 60, confirm: false});
+		var n_entries = $scope.current_recipe['entries'].length;
+		$scope.entryToBeEdited = $scope.current_recipe['entries'][n_entries - 1];
+		$scope.editRecipeEntryVisible = true;
+	}
+
+	// Callback for confirm button visible when adding new recipe
   $scope.confirmAddNewRecipe = function() {
     if ($scope.newRecipeName.length <= 0) {
       Notification.error({
@@ -51,17 +59,19 @@ angular.module("RecipeApp", ['ui-notification']).controller("RecipeCtrl", functi
       }]
     };
 
-		$scope.selectedRecipeOption = $scope.recipes[$scope.recipes.length - 1];
+    $scope.selectedRecipeOption = $scope.recipes[$scope.recipes.length - 1];
     $scope.addingNewRecipe = false;
-		syncRecipe();
+    syncRecipe();
   }
 
+	// Callback for cancel button visible when adding new recipe
   $scope.cancelAddNewRecipe = function() {
     $scope.newRecipeName = "";
     $scope.addingNewRecipe = false;
   }
 
 
+	// Callback for up arrows in recipe browsers entry list
   $scope.raise_entry = function(index) {
     if (index <= 0) return;
     var tmp = $scope.current_recipe['entries'][index];
@@ -70,6 +80,7 @@ angular.module("RecipeApp", ['ui-notification']).controller("RecipeCtrl", functi
     syncRecipe();
   }
 
+	// Callback for down arrows in recipe browsers entry list
   $scope.lower_entry = function(index) {
     if (index >= $scope.current_recipe['entries'].length - 1) return;
     var tmp = $scope.current_recipe['entries'][index];
@@ -78,6 +89,7 @@ angular.module("RecipeApp", ['ui-notification']).controller("RecipeCtrl", functi
     syncRecipe();
   }
 
+	// Callback for remove entry button in recipe browsers entry list
   $scope.remove_recipe_entry = function(index) {
     $scope.entryToBeEditedIndex = 0;
 
@@ -97,12 +109,13 @@ angular.module("RecipeApp", ['ui-notification']).controller("RecipeCtrl", functi
     $scope.addingNewRecipe = true;
   }
 
+  // Callback for remove recipe button in browser
   $scope.removeRecipe = function() {
     console.log("removeRecipe");
   }
 
   $scope.selectedRecipeChanged = function() {
-		get_recipe($scope.selectedRecipeOption['name']);
+    get_recipe($scope.selectedRecipeOption['name']);
   }
 
   function syncRecipe() {
@@ -275,7 +288,7 @@ angular.module("RecipeApp", ['ui-notification']).controller("RecipeCtrl", functi
         id: i,
         name: response.data[i]
       });
-			$scope.selectedRecipeOption = $scope.recipes[0];
+      $scope.selectedRecipeOption = $scope.recipes[0];
       get_recipe($scope.recipes[0]['name']);
     }, function errorCallback(response) {
       Notification.error({
