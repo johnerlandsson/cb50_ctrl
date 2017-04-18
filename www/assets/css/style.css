@@ -129,7 +129,7 @@ body {
     margin-bottom: 20px;
 }
 
-.btn-group button {
+.main-toolbar .btn-group button {
 	box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
 	background: rgb(153, 153, 153);
 	padding-top: 15px;
@@ -141,18 +141,18 @@ body {
 	display: block;
 }
 
-.btn-group button:focus {
+.main-toolbar .btn-group button:focus {
 	outline: 0;
 	border: 5px solid rgb(153, 153, 153);
 }
 
-.btn-group button:hover {
+.main-toolbar .btn-group button:hover {
 	background: rgb(51, 51, 51);
 	border: 5px solid rgb(153, 153, 153);
 	outline: 0;
 }
 
-.btn-group button:active {
+.main-toolbar .btn-group button:active {
 	background: rgb(153, 153, 153);
 	border: none;
 }
@@ -211,6 +211,7 @@ body {
 .select-recipe-row {
 	/*width: 500px;*/
 	/*max-width: 500px;*/
+	margin-top: 70px;
 	margin-left: auto;
 	margin-right: auto;
 	/*padding-left: 100px;*/
@@ -223,13 +224,21 @@ body {
 }
 
 #browse-recipe-entries i {
-	margin-right: 10px;
+	/*margin-right: 10px;*/
 }
 
 #browse-recipe-entries td {
 	padding-right: 20px;
 	padding-left: 10px;
 
+}
+
+.adding-new-recipe-row {
+	max-width: 900px;
+	width: 100%;
+	margin-top: 20px;
+	margin-bottom: 10px;
+	vertical-align: bottom;
 }
 
 /*#browser-row {*/

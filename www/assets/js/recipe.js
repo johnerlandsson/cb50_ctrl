@@ -25,26 +25,87 @@ angular.module("RecipeApp", ['ui-notification']).controller("RecipeCtrl", functi
   $scope.editRecipeEntryVisible = false;
   $scope.entryToBeEdited = {};
   $scope.entryToBeEditedIndex = 0;
-	$scope.selectedRecipeName = '';
+  $scope.selectedRecipeName = '';
+	$scope.addingNewRecipe = false;
+	$scope.newRecipeName = "";
 
-	$scope.selectedRecipeChanged = function() {
-		console.log($scope.selectedRecipeName);
+	$scope.confirmAddNewRecipe = function() {
+		console.log("here");
+		if($scope.newRecipeName.length <= 0) {
+      Notification.error({
+				message: "Error: Can't add recipe without name"
+      });
+			return;
+		}
+
+		$scope.recipe_names.push($scope.newRecipeName);
+		$scope.selectedRecipeName = $scope.newRecipeName;
+		$scope.current_recipe = {name: $scope.newRecipeName, entries: [{sv: 100.0, time: 60, confirm: false}]};
+		$scope.addingNewRecipe = false;
 	}
 
-	function syncRecipe() {
+	$scope.cancelAddNewRecipe = function() {
+		$scope.newRecipeName = "";
+		$scope.addingNewRecipe = false;
+	}
+
+
+	$scope.raise_entry = function(index) {
+		if(index <= 0) return;
+		var tmp = $scope.current_recipe['entries'][index];
+		$scope.current_recipe['entries'][index] = $scope.current_recipe['entries'][index - 1];
+		$scope.current_recipe['entries'][index - 1] = tmp;
+		syncRecipe();
+	}
+
+	$scope.lower_entry = function(index) {
+		if(index >= $scope.current_recipe['entries'].length - 1) return;
+		var tmp = $scope.current_recipe['entries'][index];
+		$scope.current_recipe['entries'][index] = $scope.current_recipe['entries'][index + 1];
+		$scope.current_recipe['entries'][index + 1] = tmp;
+		syncRecipe();
+	}
+
+  $scope.remove_recipe_entry = function(index) {
+    $scope.entryToBeEditedIndex = 0;
+
+		if($scope.current_recipe['entries'].length <= 1) {
+      Notification.error({
+				message: "Error: Recipe needs at least one entry"
+      });
+			return;
+		}
+
+    if (index >= 0) $scope.current_recipe['entries'].splice(index, 1);
+		syncRecipe();
+  }
+
+  $scope.addRecipe = function() {
+		$scope.addingNewRecipe = true;
+  }
+
+  $scope.removeRecipe = function() {
+    console.log("removeRecipe");
+  }
+
+  $scope.selectedRecipeChanged = function() {
+    console.log($scope.selectedRecipeName);
+  }
+
+  function syncRecipe() {
     $http.post('sync_recipe', {
       message: $scope.current_recipe
     }).then(function successCallback(response) {
       Notification.success({
         message: "Successfully synced recipe"
       });
-			$scope.editRecipeEntryVisible = false;
+      $scope.editRecipeEntryVisible = false;
     }, function errorCallback(response) {
       Notification.error({
-				message: "Failed to sync recipe: " + response.body
+        message: "Failed to sync recipe: " + response.body
       });
     });
-	}
+  }
 
   $scope.cancelEditing = function() {
     $scope.editRecipeEntryVisible = false;
@@ -52,7 +113,7 @@ angular.module("RecipeApp", ['ui-notification']).controller("RecipeCtrl", functi
 
   $scope.editingFinished = function() {
     $scope.current_recipe['entries'][$scope.entryToBeEditedIndex] = $scope.entryToBeEdited;
-		syncRecipe();
+    syncRecipe();
   }
 
   $scope.edit_recipe_entry = function(index) {
@@ -63,8 +124,8 @@ angular.module("RecipeApp", ['ui-notification']).controller("RecipeCtrl", functi
 
   // Is called after successful get_recipe()
   function current_recipe_updated() {
-		//console.log($scope.current_recipe['name']);
-		$scope.selectedRecipeName = $scope.current_recipe['name'];
+    //console.log($scope.current_recipe['name']);
+    $scope.selectedRecipeName = $scope.current_recipe['name'];
     $scope.entryToBeEdited = $scope.current_recipe['entries'][0];
   }
 
