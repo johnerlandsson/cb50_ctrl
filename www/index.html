@@ -181,11 +181,36 @@
                 </div>
             </div>
         </div>
-        <div class="container-recipe-viewer" ng-show="recipeViewerVisible">
+        <div class="container-recipe-viewer" ng-show="recipeViewerVisible" style="margin-top: 50px">
             <div class="container">
-                <label for="browser-row">Browse recipes</label>
-                <div class="row" id="browser-row">
-                    Recipe viewer
+                <div class="row">
+                    <div class="col-xs-7">
+                        <div class="container">
+                            <div class="row" ng-repeat="(i, e) in current_recipe['entries']">
+                                <div class="col-xs-1">
+                                    <i class="fa fa-arrow-right" ng-show="current_recipe_step == i" aria-hidden="true"></i>
+                                </div>
+                                <div class="col-xs-2">
+                                    <i class="fa fa-thermometer-quarter" aria-hidden="true"></i>                                    {{ e['sv'] }}&deg;
+                                </div>
+                                <div class="col-xs-2">
+                                    <i class="fa fa-clock-o" aria-hidden="true"></i>                                    {{ e['time'] }} min
+                                </div>
+                                <div class="col-xs-1">
+                                    <button class="btn btn-primary" ng-click="skip_step_clicked()" ng-disabled="current_recipe_step != i"
+                                        ng-show="current_recipe_step == i">
+																			<i class="fa fa-fast-forward" aria-hidden="true"></i>
+																		</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-2">
+                        <object type="image/svg+xml" data="assets/img/thermometer-widget.svg" height="300px"
+                            id="thermometer-widget"></object>
+                        <div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

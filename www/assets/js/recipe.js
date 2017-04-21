@@ -28,6 +28,11 @@ recipeModule.controller("RecipeCtrl", function($scope, $http, Notification) {
   $scope.newRecipeName = "";
   $scope.recipes = [];
   $scope.selectedRecipeOption = {};
+	$scope.current_recipe_step = 0;
+
+	$scope.skip_step_clicked = function() {
+		console.log("skip step");
+	}
 
 	$scope.add_entry = function() {
 		$scope.current_recipe['entries'].push({sv: 100, time: 60, confirm: false});
@@ -116,6 +121,7 @@ recipeModule.controller("RecipeCtrl", function($scope, $http, Notification) {
 
   $scope.selectedRecipeChanged = function() {
     get_recipe($scope.selectedRecipeOption['name']);
+		$scope.current_recipe_step = 0;
   }
 
   function syncRecipe() {
