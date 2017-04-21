@@ -68,7 +68,7 @@
        x2="-243.41667"
        y2="-520.5625"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(0.205067,0,0,0.205067,65.007195,287.58176)" />
+       gradientTransform="matrix(0.20483987,0,0,0.19801648,64.948303,-146.88871)" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -77,9 +77,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.98994949"
-     inkscape:cx="-99.875559"
-     inkscape:cy="284.61231"
+     inkscape:zoom="1.4"
+     inkscape:cx="177.37058"
+     inkscape:cy="264.76418"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -102,7 +102,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -478,13 +478,14 @@
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="ssssscccccs" />
     <rect
-       style="opacity:1;fill:url(#linearGradient4844);fill-opacity:1;stroke-width:0.615201;stroke-miterlimit:4;stroke-dasharray:none"
+       style="opacity:1;fill:url(#linearGradient4844);fill-opacity:1;stroke-width:0.60419792;stroke-miterlimit:4;stroke-dasharray:none"
        id="bar"
-       width="6.5108747"
-       height="132.38783"
-       x="8.5795946"
-       y="150.99005"
-       ry="3.2554374" />
+       width="6.5036635"
+       height="127.83615"
+       x="8.5832005"
+       y="-278.78418"
+       ry="3.1435106"
+       transform="scale(1,-1)" />
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.56259012px;line-height:2.85161877px;font-family:'Courier 10 Pitch';-inkscape-font-specification:'Courier 10 Pitch';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.05425731px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -623,17 +624,5 @@
        cx="11.920807"
        cy="285.30792"
        r="9.9311018" />
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.84212208px;line-height:3.65132666px;font-family:'Courier 10 Pitch';-inkscape-font-specification:'Courier 10 Pitch';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       x="3.6986558"
-       y="287.20078"
-       id="text5026"><tspan
-         sodipodi:role="line"
-         id="tspan5024"
-         x="3.6986558"
-         y="287.20078"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:'Courier 10 Pitch';-inkscape-font-specification:'Courier 10 Pitch Bold';stroke:none;stroke-width:0.1;stroke-miterlimit:4;stroke-dasharray:none"
-         dx="0 0 0 -0.64999998 -0.86000001">100°C</tspan></text>
   </g>
 </svg>

@@ -15,6 +15,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+function set_thermometer_value(value) {
+	bar = document.getElementById("thermometer-widget").contentDocument.getElementById("bar");
+	//var height = value * ((127.836 - 8.396) / 100.0) + 8.396;
+	//var height = value * 1.1944 + 10.1913;
+	var height = -0.0021544 * value**2 + 1.40984 * value + 8.396;
+	bar.setAttribute("height", height);
+}
+
 //The module
 var recipeModule = angular.module("RecipeApp", ['ui-notification']);
 recipeModule.controller("RecipeCtrl", function($scope, $http, Notification) {
@@ -176,6 +184,8 @@ recipeModule.controller("RecipeCtrl", function($scope, $http, Notification) {
   function get_pd() {
     $http.get("get_pd").then(function successCallback(response) {
       $scope.pd = response.data;
+			//if($scope.recipeViewerVisible) set_thermometer_value($scope.pd['pv']);
+			if($scope.recipeViewerVisible) set_thermometer_value(50);
     }, function errorCallback(response) {
       Notification.error({
         message: "Failed to receive process data from server."
